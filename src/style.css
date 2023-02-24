@@ -1,0 +1,19 @@
+* {
+	margin: 0;
+	border: 0;
+	font-family: Roboto;
+}
+
+html,
+body,
+#app {
+	width: 100%;
+	height: 100%;
+	background-color: #ffecd4;
+}
+
+#app {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

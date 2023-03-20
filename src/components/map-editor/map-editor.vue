@@ -1,47 +1,34 @@
 <script setup lang="ts">
-import * as PIXI from "pixi.js";
-import { computed, onBeforeMount, onMounted, reactive, ref, toRaw, watch } from "vue";
+import { computed, onMounted, reactive, ref, toRaw, watch, onBeforeMount } from "vue";
 import { FormRules, FormInstance } from "element-plus";
-import { MapItem, TypeItem } from "../../utils/interfaces";
-import { ThreeBuilder } from "../../utils/three-builder";
+import { MapItem, ItemType, Model, Property, ChanceCard } from "@/utils/interfaces";
+import { MapEditor } from "./map-editor";
+import { getModelList } from "@/utils/api/model";
+import router from "@/router/index";
+import { useRoute } from "vue-router";
+import { getItemTypesListByMapId, getMapItemsListByMapId, getMapById } from "@/utils/api/map";
+import { createItemTypes } from "@/utils/api/itemType";
+import { deleteMapItem } from "../../utils/api/mapItem";
+import { ThreeBuilder } from "@/utils/three-builder";
 
 const props = defineProps({
 	column: {
 		type: Number,
-		default: 20,
+		default: 30,
 	},
 	row: {
 		type: Number,
 		default: 20,
 	},
-	width: {
+	cellSize: {
 		type: Number,
-		default: 600,
-	},
-	height: {
-		type: Number,
-		default: 600,
+		default: 20,
 	},
 });
 
-//导出
-const mapName = ref("");
-const handleExportMapData = () => {
-	const tempMapItemIndex = pathFind(toRaw(mapData).filter((item) => item.type.name === "item"));
-
-	const dataToExport = {
-		name: mapName.value,
-		data: toRaw(mapData),
-		index: tempMapItemIndex,
-	};
-
-	const urlObject = window.URL || window.webkitURL || window;
-	const exportData = new Blob([JSON.stringify(dataToExport)]);
-	const save_link = document.createElement("a");
-	save_link.href = urlObject.createObjectURL(exportData);
-	save_link.download = `map-${mapName.value}.json`;
-	save_link.click();
-};
+const route = useRoute();
+const _mapId = route.query.mapId as string;
+const _mapName = ref("");
 
 const pathFind = (itemList: MapItem[]) => {
 	const tempList: MapItem[] = [];
@@ -63,38 +50,64 @@ const pathFind = (itemList: MapItem[]) => {
 			}
 		}
 	}
-	return tempList.map(item => item.id);
+	return tempList.map((item) => item.id);
 };
 
 //类型管理
 
-const typeList = reactive<Array<TypeItem>>([]);
-
 const newTypeForm = reactive({
 	name: "",
-	module: "",
+	modelId: "",
 	color: "",
 	size: 1,
 });
 const formRef = ref<FormInstance>();
+
 const rules = reactive<FormRules>({
 	name: [{ required: true, message: "填写添加类型的名称", trigger: "blur" }],
-	module: [{ required: true, message: "填写添加类型模型的名称", trigger: "blur" }],
+	modelId: [{ required: true, message: "填写添加类型模型的名称", trigger: "blur" }],
 	color: [{ required: true, message: "选择颜色", trigger: "blur" }],
 	size: [{ required: true, message: "选择大小", trigger: "blur" }],
 });
 
-const currentType = ref<TypeItem>();
+//数据管理
+const _linkTargetId = ref("");
+const _currentMapItemId = ref("");
+const _currentX = ref(-100);
+const _currentY = ref(-100);
 
-const handleAddType = (formEl: FormInstance | undefined) => {
+const _currentType = ref<ItemType>();
+
+const _modelsList = ref<Model[]>([]);
+const _mapItemslist = ref<Array<MapItem>>([]);
+
+const _itemTypeList = ref<Array<ItemType>>([]);
+const _propertiesList = ref<Property[]>([]);
+const _chanceCardsList = ref<ChanceCard[]>([]);
+
+const _currentMapItem = computed(() => getMapItemById(_currentMapItemId.value));
+
+const getMapItemById = (id: string) => {
+	return _mapItemslist.value.find((item) => item.id === id);
+};
+
+const loadModelList = async () => {
+	const { modelList } = await getModelList(1, 100);
+
+	_modelsList.value = modelList;
+};
+
+const loadMapItemsList = async () => {
+	_mapItemslist.value = (await getMapItemsListByMapId(_mapId)) as any;
+};
+
+const handleAddType = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
-	formEl.validate((valid) => {
+	await formEl.validate(async (valid) => {
 		if (valid) {
-			const data = { ...toRaw(newTypeForm) };
-			console.log(data);
-
-			typeList.push(data);
-			localStorage.setItem("type-data", JSON.stringify(toRaw(typeList)));
+			const { name, color, modelId, size } = { ...toRaw(newTypeForm) };
+			await createItemTypes(name, color, size, modelId, _mapId);
+			_itemTypeList.value = (await getItemTypesListByMapId(_mapId)) as any;
 			formEl.resetFields();
 		} else {
 			console.log("error submit!");
@@ -103,332 +116,133 @@ const handleAddType = (formEl: FormInstance | undefined) => {
 	});
 };
 
-const handleRemoveType = (index: number) => {
-	currentType.value = undefined;
-	typeList.splice(index, 1);
-	localStorage.setItem("type-data", JSON.stringify(toRaw(typeList)));
+const removeItem = async () => {
+	if (_currentMapItem.value) {
+		await deleteMapItem(_currentMapItem.value.id);
+		_currentMapItemId.value = "";
+		await loadMapItemsList();
+	}
 };
 
-//数据管理
+const handleRemoveType = (id: number) => {};
 
-const mapData = reactive<Array<MapItem>>([]);
-const currentMapItemId = ref("");
+onBeforeMount(async () => {
+	if (_mapId) {
+		const { name, mapItems, properties, chanceCards, itemTypes } = (await getMapById(_mapId)) as any;
 
-const currentMapItem = computed(() => getMapItemById(currentMapItemId.value));
-
-const getMapItemById = (id: string) => {
-	return mapData.find((item) => item.id === id);
-};
-
-const handleAddMapItem = (mapItem: MapItem) => {
-	const itemIndex = mapData.findIndex((item) => item.id === mapItem.id);
-	if (itemIndex == -1) {
-		mapData.push(mapItem);
+		_mapName.value = name;
+		_mapItemslist.value = mapItems;
+		_propertiesList.value = properties;
+		_chanceCardsList.value = chanceCards;
+		_itemTypeList.value = itemTypes;
 	} else {
-		mapData[itemIndex] = mapItem;
+		router.replace("/map");
 	}
-	localStorage.setItem("map-data", JSON.stringify(toRaw(mapData)));
-};
+});
 
-const handleRemoveMapItem = (id: string) => {
-	const itemIndex = mapData.findIndex((item) => item.id === id);
-	if (itemIndex != -1) {
-		mapData.splice(itemIndex, 1);
-		currentMapItemId.value = "";
-		localStorage.setItem("map-data", JSON.stringify(toRaw(mapData)));
-	}
-};
+onMounted(async () => {
+	await loadModelList();
+	const pixiCanvas = document.getElementById("pixiCanvas") as HTMLCanvasElement;
+	const mapEditor = new MapEditor(
+		pixiCanvas,
+		props.column,
+		props.row,
+		props.cellSize,
+		_mapItemslist,
+		_currentMapItemId,
+		_currentType,
+		_currentX,
+		_currentY,
+		_mapId
+	);
+	mapEditor.updateDataContainer(_mapItemslist.value);
 
-const getMapItemCenter = (mapItem: MapItem, cellSize: number) => {
-	const x = (mapItem.x + mapItem.type.size / 2) * cellSize;
-	const y = (mapItem.y + mapItem.type.size / 2) * cellSize;
-	return [x, y];
-};
-
-const linkTargetId = ref("");
-const handleLink = (source: string, target: string) => {
-	if (source === target) return;
-	const sourceItem = getMapItemById(source);
-	const targetItem = getMapItemById(target);
-	if (sourceItem && targetItem) {
-		sourceItem.link = targetItem;
-	} else {
-		if (sourceItem?.link) sourceItem.link = undefined;
-	}
-	localStorage.setItem("map-data", JSON.stringify(toRaw(mapData)));
-};
-
-//canvas管理
-const currentX = ref(0);
-const currentY = ref(0);
-
-onMounted(() => {
-	//加载模型预览
 	const threeCanvas = document.getElementById("threeCanvas") as HTMLCanvasElement;
 	const threeBuilder = new ThreeBuilder(threeCanvas);
+	
+	await threeBuilder.loadModels(_itemTypeList.value);
+	await threeBuilder.loadMapItems(_mapItemslist.value);
 
-	//加载地图编辑器
-	const pixiCanvas = document.getElementById("pixiCanvas") as HTMLCanvasElement;
-	const app = new PIXI.Application({
-		view: pixiCanvas,
-		width: props.width,
-		height: props.height,
-		backgroundColor: 0xffcf70,
+	watch(_mapItemslist, (newDataList) => {
+		threeBuilder.reloadMapItems(newDataList);
 	});
 
-	const backGroundContainer = new PIXI.Container(); //背景图层
-	const dataContainer = new PIXI.Container(); //渲染以存在的数据图层
-	const preContainer = new PIXI.Container(); //渲染预览图层
-	backGroundContainer.zIndex = 0;
-	dataContainer.zIndex = 50;
-	preContainer.zIndex = 100;
-
-	dataContainer.sortableChildren = true;
-
-	// 定义网格单元的大小
-	const cellSize = Math.floor(props.width / props.row);
-
-	const preCell = new PIXI.Graphics();
-	const lineCell = new PIXI.Graphics();
-	preContainer.addChild(preCell);
-	preContainer.addChild(lineCell);
-
-	watch(
-		currentType,
-		(newVal) => {
-			if (newVal) preCell.beginFill(newVal.color);
-		},
-		{ deep: true }
-	);
-
-	watch(
-		mapData,
-		(newArr) => {
-			dataContainer.removeChildren();
-			threeBuilder.reloadMap(newArr);
-			newArr.forEach((item) => {
-				//渲染方块
-				const cell = new PIXI.Graphics();
-				cell.zIndex = 0;
-				cell.beginFill(item.type.color);
-				cell.lineStyle(1, 0xffffff);
-				cell.drawRect(item.x * cellSize, item.y * cellSize, cellSize * item.type.size, cellSize * item.type.size);
-				cell.endFill();
-
-				cell.eventMode = "dynamic";
-				cell.on("mouseenter", () => {
-					currentX.value = item.x;
-					currentY.value = item.y;
-				});
-				cell.on("mouseout", () => {
-					currentX.value = -100;
-					currentY.value = -100;
-				});
-				cell.on("click", () => {
-					if (currentType.value) return;
-					currentMapItemId.value = item.id;
-				});
-
-				dataContainer.addChild(cell);
-
-				//渲染连接
-				if (item.link) {
-					const linkLine = new PIXI.Graphics();
-					const [sourceX, sourceY] = getMapItemCenter(item, cellSize);
-					const [targetX, targetY] = getMapItemCenter(item.link, cellSize);
-					linkLine.zIndex = 100;
-
-					linkLine.lineStyle(3, 0xffffff, 1, 0.5);
-					linkLine.moveTo(sourceX, sourceY);
-					linkLine.lineTo(targetX, targetY);
-					dataContainer.addChild(linkLine);
-				}
-			});
-			app.render();
-		},
-		{ deep: true }
-	);
-
-	watch([currentX, currentY], (newVal) => {
-		if (!currentType.value) return;
-		preCell.clear();
-		preCell.beginFill(currentType.value.color);
-		preCell.lineStyle(1, 0xffffff);
-		preCell.drawRect(0, 0, cellSize * currentType.value.size, cellSize * currentType.value.size);
-		preCell.endFill();
-		preCell.x = newVal[0] * cellSize;
-		preCell.y = newVal[1] * cellSize;
-		app.render();
+	watch(_itemTypeList, (newDataList) => {
+		threeBuilder.loadModels(newDataList);
 	});
-
-	watch(currentMapItemId, (newVal) => {
-		if (currentType.value) return;
-		const mapItem = getMapItemById(newVal);
-		if (mapItem) {
-			lineCell.clear();
-			lineCell.beginFill(0, 0);
-			lineCell.lineStyle(3, 0xffffff);
-			lineCell.drawRect(
-				mapItem.x * cellSize,
-				mapItem.y * cellSize,
-				cellSize * mapItem.type.size,
-				cellSize * mapItem.type.size
-			);
-			lineCell.endFill();
-			app.render();
-		} else {
-			lineCell.clear();
-			app.render();
-			return;
-		}
-	});
-
-	//读取之前保存的数据
-	const storeTypeList = localStorage.getItem("type-data");
-	const tempTypeList: Array<TypeItem> = storeTypeList ? JSON.parse(storeTypeList) : [];
-	tempTypeList.forEach((item) => {
-		typeList.push(item);
-	});
-	const storeMapData = localStorage.getItem("map-data");
-	const tempMapData: Array<MapItem> = storeMapData ? JSON.parse(storeMapData) : [];
-	tempMapData.forEach((item) => {
-		mapData.push(item);
-	});
-
-	//初始化背景层
-	for (let x = 0; x < 20; x++) {
-		for (let y = 0; y < 20; y++) {
-			// 创建一个Graphics对象
-			const cell = new PIXI.Graphics();
-			let mapItem: MapItem;
-			const id = `item-${x}-${y}`;
-
-			// 绘制一个矩形
-			cell.beginFill(0, 0.5);
-			cell.lineStyle(1, 0x999999);
-			cell.drawRect(0, 0, cellSize, cellSize);
-			cell.endFill();
-
-			// 设置正方形的位置
-			cell.x = x * cellSize;
-			cell.y = y * cellSize;
-
-			cell.eventMode = "dynamic";
-			cell.on("mouseenter", () => {
-				currentX.value = x;
-				currentY.value = y;
-			});
-			cell.on("mouseout", () => {
-				currentX.value = -100;
-				currentY.value = -100;
-			});
-			cell.on("click", () => {
-				if (currentType.value) {
-					mapItem = {
-						id,
-						x,
-						y,
-						type: toRaw(currentType.value),
-					};
-					handleAddMapItem(mapItem);
-				}
-			});
-			// 将正方形添加到容器中
-			backGroundContainer.addChild(cell);
-		}
-	}
-
-	app.stage.addChild(backGroundContainer);
-	app.stage.addChild(dataContainer);
-	app.stage.addChild(preContainer);
-	app.render();
 });
 </script>
 
 <template>
 	<div class="map-editor-page">
-		<div class="three-container">
-			<canvas id="threeCanvas" width="700" height="650"></canvas>
-		</div>
-
-		<div class="canvas-container">
-			<div class="current-coordinate">
-				当前坐标: ({{ currentX }}, {{ currentY }}) 当前类型: {{ currentType?.name }} 当前模型: {{ currentType?.module }}
+		<div style="display: flex; flex-direction: column">
+			<div class="canvas-container">
+				<canvas :width="props.column * props.cellSize" :height="props.row * props.cellSize" id="threeCanvas"></canvas>
 			</div>
-			<canvas :width="props.width" :height="props.height" id="pixiCanvas"></canvas>
+			<div class="canvas-container">
+				<div class="current-coordinate">当前坐标: ({{ _currentX }}, {{ _currentY }})</div>
+				<canvas :width="props.column * props.cellSize" :height="props.row * props.cellSize" id="pixiCanvas"></canvas>
+			</div>
 		</div>
 
 		<div class="tool-container">
 			<div class="type-list-container">
 				<div class="type-add">
-					<el-form label-position="left" label-width="70px" ref="formRef" :rules="rules" :model="newTypeForm">
-						<el-form-item label="name" prop="name">
+					<el-form label-position="left" label-width="100px" ref="formRef" :rules="rules" :model="newTypeForm">
+						<el-form-item label="类型名称" prop="name">
 							<el-input v-model="newTypeForm.name" placeholder=""></el-input>
 						</el-form-item>
-						<el-form-item label="module" prop="module">
-							<el-input v-model="newTypeForm.module" placeholder=""></el-input>
-						</el-form-item>
-						<el-form-item label="color" prop="color">
-							<el-color-picker color-format="hex" v-model="newTypeForm.color" placeholder=""></el-color-picker>
-						</el-form-item>
-						<el-form-item label="size" prop="size">
-							<el-input-number v-model="newTypeForm.size" :min="1" :max="3"></el-input-number>
-						</el-form-item>
-						<el-form-item>
-							<el-button @click="handleAddType(formRef)" type="primary">添加类型</el-button>
-						</el-form-item>
-						<el-form-item label="选择类型">
-							<el-select value-key="color" clearable v-model="currentType" placeholder="选择类型进入添加模式">
-								<el-option v-for="(item, index) in typeList" :key="item.color" :value="item" :label="item.name">
-									<div class="flex align-center justify-space-between">
-										<span :style="{ color: item.color }">{{ item.name }}</span>
-										<span
-											@click.stop="handleRemoveType(index)"
-											style="color: var(--el-color-danger); font-size: 0.8; float: right"
-											>删除</span
-										>
-									</div>
+
+						<el-form-item label="模型" prop="modelId">
+							<el-select clearable v-model="newTypeForm.modelId" placeholder="选择模型">
+								<el-option v-for="model in _modelsList" :key="model.id" :value="model.id" :label="model.name">
 								</el-option>
 							</el-select>
 						</el-form-item>
+
+						<el-form-item label="代表颜色" prop="color">
+							<el-color-picker color-format="hex" v-model="newTypeForm.color" placeholder=""></el-color-picker>
+						</el-form-item>
+
+						<el-form-item label="占用格数" prop="size">
+							<el-input-number v-model="newTypeForm.size" :min="1" :max="3"></el-input-number>
+						</el-form-item>
+
+						<el-form-item>
+							<el-button @click="handleAddType(formRef)" type="primary">添加类型</el-button>
+						</el-form-item>
 					</el-form>
+				</div>
+
+				<div class="current-type-preview">
+					<el-select value-key="color" clearable v-model="_currentType" placeholder="选择类型进入添加模式">
+						<el-option v-for="(item, index) in _itemTypeList" :key="item.color" :value="item" :label="item.name">
+							<div class="flex align-center justify-space-between">
+								<span :style="{ color: item.color }">{{ item.name }}</span>
+							</div>
+						</el-option>
+					</el-select>
 				</div>
 			</div>
 
 			<div class="map-item-editor">
 				<div class="current-item">
-					<p style="margin-bottom: 5px">当前选择id: {{ currentMapItemId }} type: {{ currentMapItem?.type.name }}</p>
-					<el-input clearable style="margin-bottom: 5px" v-model="linkTargetId" placeholder="输入连接目标id">
+					<p style="margin-bottom: 5px">当前选择id: {{ _currentMapItemId }} type: {{ _currentMapItem?.type.name }}</p>
+					<el-input clearable style="margin-bottom: 5px" v-model="_linkTargetId" placeholder="输入连接目标id">
 						<template #append>
-							<el-button
-								:disabled="currentMapItemId === ''"
-								@click="handleLink(currentMapItemId, linkTargetId)"
-								type="primary"
-								>link</el-button
-							>
+							<el-button :disabled="_currentMapItemId === ''" type="primary">link</el-button>
 						</template>
 					</el-input>
-					<el-button
-						style="width: 100%"
-						:disabled="currentMapItemId === ''"
-						type="danger"
-						@click="handleRemoveMapItem(currentMapItemId)"
+					<el-button @click="removeItem()" style="width: 100%" :disabled="_currentMapItemId === ''" type="danger"
 						>delete</el-button
 					>
 				</div>
-				<el-table height="150" :data="mapData" style="width: 100%">
+				<el-table height="150" :data="_mapItemslist" style="width: 100%">
 					<el-table-column prop="x" label="x" />
 					<el-table-column prop="y" label="y" />
 					<el-table-column prop="link.id" label="连接" />
 					<el-table-column prop="type.name" label="类型"></el-table-column>
 				</el-table>
-			</div>
-
-			<div class="map-data-export">
-				<el-input v-model="mapName" placeholder="输入地图名称"></el-input>
-				<el-button :disabled="mapData.length == 0 || mapName == ''" @click="handleExportMapData()" type="primary"
-					>导出</el-button
-				>
 			</div>
 		</div>
 	</div>
@@ -439,19 +253,15 @@ onMounted(() => {
 	width: 100%;
 	height: 100%;
 	display: flex;
-	justify-content: center;
+	justify-content: space-around;
 	align-items: center;
-
-	& > div {
-		margin-left: 20px;
-	}
 }
 
-.canvas-container,
-.three-container {
+.canvas-container {
 	border-radius: 10px;
 	background-color: #ffaa00;
 	padding: 10px;
+	margin-bottom: 10px;
 
 	& > canvas {
 		border-radius: inherit;
@@ -459,25 +269,26 @@ onMounted(() => {
 	}
 }
 
-.canvas-container {
-	padding-top: 0;
-}
-
 .current-coordinate {
-	font-size: 1.1em;
+	font-size: 0.9em;
 	font-weight: bold;
 	line-height: 2em;
 	color: #ffffff;
 }
 
 .tool-container {
-	width: 400px;
+	width: 300px;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	border-radius: 10px;
 }
 
+.current-type-preview {
+}
+
 .type-add,
+.current-type-preview,
 .map-item-editor,
 .map-data-export {
 	border-radius: 10px;

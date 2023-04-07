@@ -4,7 +4,8 @@ export interface MapItem {
 	x: number;
 	y: number;
 	type: ItemType;
-	link?: MapItem;
+	linkto?: MapItem;
+	property?: Property;
 }
 
 export interface ItemType {
@@ -25,10 +26,10 @@ export interface Property {
 	id: string;
 	name: string;
 	sellCost: number;
+	buildCost: number;
 	cost_lv0: number;
 	cost_lv1: number;
 	cost_lv2: number;
-	mapItem: MapItem;
 	street: Street;
 }
 
@@ -43,6 +44,7 @@ export interface ChanceCard {
 	name: string;
 	describe: string;
 	icon: string;
+	color: string;
 	effectCode: string;
 }
 

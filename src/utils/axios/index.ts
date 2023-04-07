@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
-import { _BASEURL_ } from '@/bace';
+import { _BASEURL_ } from "@/bace";
 
 axios.defaults.baseURL = _BASEURL_;
 axios.defaults.headers.common["Authorization"] = localStorage.getItem("token");
@@ -29,6 +29,12 @@ axios.interceptors.response.use(
 				//成功请求
 				ElMessage({
 					type: "success",
+					message: msg,
+				});
+			} else if (status == 400) {
+				//普通警告
+				ElMessage({
+					type: "warning",
 					message: msg,
 				});
 			} else if (status == 401) {

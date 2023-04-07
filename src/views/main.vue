@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { menus } from "../router/menus";
+import { computed } from "vue";
+import router from "@/router/index";
+
+const currentRoutePath = computed(() => router.currentRoute.value.path);
 </script>
 
 <template>
@@ -8,8 +12,9 @@ import { menus } from "../router/menus";
 
 		<el-container>
 			<el-aside class="menu-container" width="240px">
-				<el-menu router :default-active="menus[0].path" class="el-menu-vertical-demo">
-					<el-menu-item v-for="item in menus" :index="item.name">
+				<el-menu router :default-active="currentRoutePath" class="el-menu-vertical-demo">
+					<el-menu-item v-for="item in menus" :index="item.path">
+						<el-icon><component :is="item.icon"></component></el-icon>
 						<span>{{ item.menuName }}</span>
 					</el-menu-item>
 				</el-menu>

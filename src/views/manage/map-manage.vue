@@ -10,6 +10,8 @@ const createMapDialogVisible = ref(false);
 
 const _mapList = ref<GameMap[]>([]);
 
+const isLoading = ref(true);
+
 //表单
 const fromRef = ref<FormInstance>();
 const newMapForm = reactive({
@@ -22,17 +24,19 @@ const rules = reactive<FormRules>({
 //分页
 const currentPage = ref(1);
 const totalPage = ref(0);
-const size = ref(8);
+const size = ref(6);
 
 const handleCurrentChange = () => {
 	loadMapsList();
 };
 
 const loadMapsList = async () => {
+	isLoading.value = true;
 	const { total, mapsList, current } = await getMapsList(currentPage.value, size.value);
 	_mapList.value = mapsList;
 	totalPage.value = total;
 	currentPage.value = current;
+	isLoading.value = false;
 };
 
 const handleCreateMap = () => {
@@ -51,8 +55,8 @@ const handleMapDelete = async () => {
 	loadMapsList();
 };
 
-onMounted(() => {
-	loadMapsList();
+onMounted(async () => {
+	await loadMapsList();
 });
 </script>
 
@@ -65,11 +69,12 @@ onMounted(() => {
 			</el-col>
 		</el-row>
 
-		<div class="map-list-container">
+		<div v-loading="isLoading" element-loading-text="Loading..." class="map-list-container">
 			<map-list-card @edit="handleMapEdit" @delete="handleMapDelete" v-for="map in _mapList" :key="map.id" :map="map" />
 		</div>
 
 		<el-pagination
+			background
 			v-model:current-page="currentPage"
 			:page-size="size"
 			layout="total, prev, pager, next"

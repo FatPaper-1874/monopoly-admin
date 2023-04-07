@@ -18,10 +18,15 @@ export class ModelPreview {
 
 		const light = new AmbientLight(0xffffff, 1.5); // soft white light
 		this.scene.add(light);
+		this.renderer.render(this.scene, this.camera);
 	}
 
 	public async loadModel(modelFileName: string, rotatable: boolean) {
 		this.scene.clear();
+		if (!modelFileName) {
+			this.renderer.render(this.scene, this.camera);
+			return;
+		}
 		const loader = new GLTFLoader();
 		const gltf = await loader.loadAsync(`${_BASEURL_}/static/models/${modelFileName}`);
 
@@ -62,7 +67,7 @@ export class ModelPreview {
 		}
 	}
 
-	public distory(){
+	public distory() {
 		this.scene.clear();
 		this.renderer.clear();
 		this.renderer.dispose();

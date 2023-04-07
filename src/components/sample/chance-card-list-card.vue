@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import { deleteMap } from "@/utils/api/map";
-import { GameMap } from "@/utils/interfaces";
+import { deleteChanceCard } from "@/utils/api/chanceCard";
+import { ChanceCard } from "@/utils/interfaces";
 import { ElMessageBox } from "element-plus";
-import { onMounted, onUnmounted } from "vue";
-import { ThreeBuilder } from "../../utils/three-builder";
+import chanceCardItem from "./chance-card.vue";
 
-const { map } = defineProps<{ map: GameMap }>();
+const { chanceCard } = defineProps<{ chanceCard: ChanceCard }>();
 const emit = defineEmits(["delete", "edit"]);
 
 const handleEdit = () => {
-	emit("edit", map.id);
+	emit("edit", chanceCard.id);
 };
 
-const handleDelete = () => {
-	ElMessageBox.alert("删除这个地图会导致这个地图的其他数据一并删除,如( Property, MapItem ),你确定要删除吗", "警告", {
+const handleDelete = async () => {
+	await ElMessageBox.alert("删除这张机会卡时引用这张卡的地图也会丢失这张卡，确定删除吗", "警告", {
 		confirmButtonText: "确定删除",
 		cancelButtonText: "取消",
 		type: "warning",
 	}).then(async () => {
-		await deleteMap(map.id);
+		await deleteChanceCard(chanceCard.id);
 		emit("delete");
 	});
 };
@@ -33,27 +32,13 @@ const handleCommand = (command: string) => {
 			break;
 	}
 };
-
-let threeBuilder: ThreeBuilder;
-
-onMounted(async () => {
-	const threeCanvas = document.getElementById(map.id) as HTMLCanvasElement;
-	threeBuilder = new ThreeBuilder(threeCanvas);
-	await threeBuilder.loadModels(map.itemTypes);
-	await threeBuilder.loadMapItems(map.mapItems);
-	threeBuilder.lockCamera(true);
-});
-
-onUnmounted(() => {
-	threeBuilder.distory();
-});
 </script>
 
 <template>
 	<el-card class="map-preview-card" :body-style="{ width: '100%', flex: '1', 'box-sizing': 'border-box' }">
 		<template #header>
 			<div class="card-header">
-				<span>{{ map.name }}</span>
+				<span>{{ chanceCard.name }}</span>
 				<el-dropdown trigger="click" @command="handleCommand">
 					<el-button class="button" text style="color: #409eff">操作</el-button>
 					<template #dropdown>
@@ -65,7 +50,16 @@ onUnmounted(() => {
 				</el-dropdown>
 			</div>
 		</template>
-		<canvas class="map-preview__canvas" :id="map.id"></canvas>
+		<div class="container">
+			<chanceCardItem
+				:id="chanceCard.id"
+				:name="chanceCard.name"
+				:describe="chanceCard.describe"
+				:icon="chanceCard.icon"
+				:color="chanceCard.color"
+				:effect-code="chanceCard.effectCode"
+			></chanceCardItem>
+		</div>
 	</el-card>
 </template>
 
@@ -76,6 +70,13 @@ onUnmounted(() => {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
+
+	.container {
+		margin: auto;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 }
 .card-header {
 	display: flex;

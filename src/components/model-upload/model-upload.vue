@@ -34,7 +34,7 @@ const submitUpload = () => {
 	});
 };
 
-const handleClose = (done:any) => {
+const handleClose = (done: any) => {
 	fromRef.value?.resetFields();
 	emit("close");
 };

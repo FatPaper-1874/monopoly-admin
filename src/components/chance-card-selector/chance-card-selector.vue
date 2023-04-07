@@ -1,0 +1,71 @@
+<script setup lang="ts">
+import ItemSelector from "../sample/item-selector.vue";
+import chanceCardVue from "@/components/sample/chance-card.vue";
+import { ChanceCard } from "@/utils/interfaces";
+import { ref, onBeforeMount, onMounted, onUpdated } from "vue";
+import { getChanceCardsList, saveChanceCardInMap } from "../../utils/api/chanceCard";
+import { getChanceCardsListByMapId } from "../../utils/api/map";
+
+const props = defineProps({ isVisible: { type: Boolean, default: false }, mapId: { type: String, default: "" } });
+
+const emit = defineEmits(["close", "confirm"]);
+
+const _chanceCardList = ref<ChanceCard[]>([]);
+const _selectedIdList = ref<string[]>([]);
+
+onUpdated(async () => {
+	const currentCardList = (await getChanceCardsListByMapId(props.mapId)) as any;
+	_selectedIdList.value = currentCardList.map((item: any) => item.id);
+	const { total, chanceCardsList, current } = await getChanceCardsList(1, 10000);
+	_chanceCardList.value = chanceCardsList;
+	console.log(_chanceCardList.value);
+});
+
+const handleSelected = (selectedList: string[]) => {
+	_selectedIdList.value = selectedList;
+};
+
+const handleClose = () => {
+	emit("close");
+};
+
+const handleConfirm = async () => {
+	await saveChanceCardInMap(_selectedIdList.value, props.mapId);
+	emit("confirm");
+};
+</script>
+
+<template>
+	<el-dialog
+		destroy-on-close
+		@close="handleClose"
+		class="chance-card-selector"
+		:model-value="props.isVisible"
+		title="选择地图包含的机会卡"
+		width="60%"
+	>
+		<ItemSelector
+			@select="handleSelected"
+			:item-list="_chanceCardList"
+			key-name="id"
+			:selected-key-list="_selectedIdList"
+		>
+			<template #item="{ id, name, describe, icon, color }">
+				<chanceCardVue :id="id" :name="name" :describe="describe" :icon="icon" :color="color" />
+			</template>
+		</ItemSelector>
+		<template #footer>
+			<span class="dialog-footer">
+				<el-button @click="handleClose">Cancel</el-button>
+				<el-button type="primary" @click="handleConfirm"> Confirm </el-button>
+			</span>
+		</template>
+	</el-dialog>
+</template>
+
+<style lang="scss" scoped>
+.chance-card-selector {
+	height: 70%;
+	overflow-y: scroll;
+}
+</style>

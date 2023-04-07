@@ -1,6 +1,5 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Group } from "three";
-import { Model, ItemType } from "./interfaces";
+import { ItemType } from "./interfaces";
 import { _BASEURL_ } from "@/bace";
 
 export const loadItemTypeModules = async (itemTypeList: ItemType[]): Promise<{ name: string; glft: GLTF }[]> => {

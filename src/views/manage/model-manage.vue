@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
 import ModelUpload from "@/components/model-upload/model-upload.vue";
 import ModelListCard from "@/components/sample/model-list-card.vue";
-import { ModelItem } from "@/utils/interfaces";
 import { getModelList } from "@/utils/api/model";
+import { Model } from "@/utils/interfaces";
+import { onMounted, ref } from "vue";
 
 //dialog控制
 const createModelVisible = ref(false);
 
-const _modelList = ref<ModelItem[]>();
+const isLoading = ref(true);
+
+const _modelList = ref<Model[]>();
 
 const currentPage = ref(1);
 const totalPage = ref(0);
@@ -19,10 +21,13 @@ const handleCurrentChange = () => {
 };
 
 const loadModelList = async () => {
+	isLoading.value = true;
 	const { total, modelList, current } = await getModelList(currentPage.value, size.value);
 	_modelList.value = modelList;
 	totalPage.value = total;
 	currentPage.value = current;
+
+	isLoading.value = false;
 };
 
 const handleUploadSuccess = () => {
@@ -35,7 +40,7 @@ const handleModelDelete = () => {
 };
 
 onMounted(async () => {
-	loadModelList();
+	await loadModelList();
 });
 </script>
 
@@ -48,11 +53,12 @@ onMounted(async () => {
 			</el-col>
 		</el-row>
 
-		<div class="model-list-container">
+		<div v-loading="isLoading" element-loading-text="Loading..." class="model-list-container">
 			<model-list-card @delete="handleModelDelete" v-for="model in _modelList" :key="model.id" :model="model" />
 		</div>
 
 		<el-pagination
+			background
 			v-model:current-page="currentPage"
 			:page-size="size"
 			layout="total, prev, pager, next"

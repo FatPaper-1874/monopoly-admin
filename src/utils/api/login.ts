@@ -5,6 +5,8 @@ export const apiLogin = async (username: string, password: string) => {
 		username,
 		password,
 	}) as any;
+	console.log(res);
+	
 	localStorage.setItem("token", "Bearer " + res.token);
 	return res.status === 200 ? true : false;
 };

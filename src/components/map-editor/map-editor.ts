@@ -1,6 +1,6 @@
 import { getMapItemsListByMapId } from "@/utils/api/map";
 import { createMapItem } from "@/utils/api/mapItem";
-import { MapItem, ItemType } from "@/utils/interfaces";
+import { MapItem, ItemType, Property } from "@/utils/interfaces";
 import * as PIXI from "pixi.js";
 import { Ref, watch } from "vue";
 
@@ -17,10 +17,12 @@ export class MapEditor {
 	private backGroundContainer: PIXI.Container;
 	private dataContainer: PIXI.Container;
 	private preContainer: PIXI.Container;
+	private pathContainer: PIXI.Container;
 
 	//图像对象
 	private preCell: PIXI.Graphics;
 	private lineCell: PIXI.Graphics;
+	private indexPathCell: PIXI.Graphics;
 
 	//数据
 	private currentX: Ref<number>;
@@ -29,7 +31,9 @@ export class MapEditor {
 	private currentType: Ref<ItemType | undefined>;
 	private currentMapItemId: Ref<string>;
 
+	private propertyList: Ref<Property[]>;
 	private mapItemList: Ref<MapItem[]>;
+	private mapIndexList: Ref<string[]>;
 
 	private mapId: string;
 
@@ -38,7 +42,9 @@ export class MapEditor {
 		column: number,
 		row: number,
 		cellSize: number,
+		propertyList: Ref<Property[]>,
 		mapItemList: Ref<MapItem[]>,
+		mapIndexList: Ref<string[]>,
 		currentMapItemId: Ref<string>,
 		currentType: Ref<ItemType | undefined>,
 		currentX: Ref<number>,
@@ -50,7 +56,10 @@ export class MapEditor {
 		this.row = row;
 		this.cellSize = cellSize;
 
+		this.propertyList = propertyList;
 		this.mapItemList = mapItemList;
+		this.mapIndexList = mapIndexList;
+
 		this.currentMapItemId = currentMapItemId;
 		this.currentType = currentType;
 
@@ -69,17 +78,21 @@ export class MapEditor {
 		this.backGroundContainer = new PIXI.Container(); //背景图层
 		this.dataContainer = new PIXI.Container(); //渲染以存在的数据图层
 		this.preContainer = new PIXI.Container(); //渲染预览图层
+		this.pathContainer = new PIXI.Container(); //渲染路径
 
 		this.backGroundContainer.zIndex = 0;
 		this.dataContainer.zIndex = 50;
 		this.preContainer.zIndex = 100;
+		this.pathContainer.zIndex = 150;
 
 		this.dataContainer.sortableChildren = true;
 
 		this.preCell = new PIXI.Graphics();
 		this.lineCell = new PIXI.Graphics();
+		this.indexPathCell = new PIXI.Graphics();
 		this.preContainer.addChild(this.preCell);
 		this.preContainer.addChild(this.lineCell);
+		this.pathContainer.addChild(this.indexPathCell);
 
 		//初始化背景层
 		for (let x = 0; x < this.column; x++) {
@@ -117,6 +130,7 @@ export class MapEditor {
 		this.app.stage.addChild(this.backGroundContainer);
 		this.app.stage.addChild(this.dataContainer);
 		this.app.stage.addChild(this.preContainer);
+		this.app.stage.addChild(this.pathContainer);
 		this.app.render();
 
 		//添加Watcher
@@ -124,8 +138,11 @@ export class MapEditor {
 	}
 
 	private addWatcher() {
+		watch(this.propertyList, (newList) => {
+			this.updatePropertyList(newList);
+		});
 		watch(this.mapItemList, (newList) => {
-			this.updateDataContainer(newList);
+			this.updateMapItemList(newList);
 		});
 		watch(this.currentMapItemId, (newId) => {
 			this.updateCurrentMapItemId(newId);
@@ -144,6 +161,9 @@ export class MapEditor {
 			preCell.x = newVal[0] * cellSize;
 			preCell.y = newVal[1] * cellSize;
 			this.app.render();
+		});
+		watch(this.mapIndexList, (newList) => {
+			this.updateIndexList(newList);
 		});
 	}
 
@@ -182,13 +202,35 @@ export class MapEditor {
 		}
 	}
 
+	public updateIndexList = (newList: string[]) => {
+		this.pathContainer.removeChildren();
+		const indexPathCell = this.indexPathCell;
+		for (let index = 0; index < newList.length - 1; index++) {
+			const currentItem = this.getMapItemById(newList[index]);
+			const nextItem = this.getMapItemById(newList[(index + 1) % newList.length]);
+			if (currentItem && nextItem) {
+				const [sourceX, sourceY] = this.getMapItemCenter(currentItem);
+				const [targetX, targetY] = this.getMapItemCenter(nextItem);
+				indexPathCell.zIndex = 101;
+
+				indexPathCell.lineStyle(3, 0x2eeeee, 1, 0.5);
+				indexPathCell.moveTo(sourceX, sourceY);
+				indexPathCell.lineTo(targetX, targetY);
+				this.pathContainer.addChild(indexPathCell);
+			}
+		}
+		this.app.render();
+	};
+
 	private getMapItemById = (id: string) => {
 		return this.mapItemList.value.find((item) => item.id === id);
 	};
 
-	public updateDataContainer(newList: MapItem[]) {
+	public updatePropertyList(newList: Property[]) {
 		console.log(newList);
+	}
 
+	public updateMapItemList(newList: MapItem[]) {
 		this.dataContainer.removeChildren();
 		newList.forEach((item) => {
 			//渲染方块
@@ -221,10 +263,11 @@ export class MapEditor {
 			this.dataContainer.addChild(cell);
 
 			//渲染连接
-			if (item.link) {
+			if (item.linkto) {
 				const linkLine = new PIXI.Graphics();
-				const [sourceX, sourceY] = this.getMapItemCenter(item, this.cellSize);
-				const [targetX, targetY] = this.getMapItemCenter(item.link, this.cellSize);
+				const [sourceX, sourceY] = this.getMapItemCenter(item);
+				const [targetX, targetY] = this.getMapItemCenter(item.linkto);
+
 				linkLine.zIndex = 100;
 
 				linkLine.lineStyle(3, 0xffffff, 1, 0.5);
@@ -236,9 +279,9 @@ export class MapEditor {
 		this.app.render();
 	}
 
-	private getMapItemCenter = (mapItem: MapItem, cellSize: number) => {
-		const x = (mapItem.x + mapItem.type.size / 2) * cellSize;
-		const y = (mapItem.y + mapItem.type.size / 2) * cellSize;
+	private getMapItemCenter = (mapItem: MapItem) => {
+		const x = (mapItem.x + mapItem.type.size / 2) * this.cellSize;
+		const y = (mapItem.y + mapItem.type.size / 2) * this.cellSize;
 		return [x, y];
 	};
 }

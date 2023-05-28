@@ -56,3 +56,17 @@ export interface GameMap {
 	chanceCards: ChanceCard[];
 	itemTypes: ItemType[];
 }
+
+export interface User {
+	id: string;
+	username: string;
+	avatar: string;
+	color: string;
+}
+
+export interface Role {
+	id: string;
+	rolename: string;
+	filename: string;
+	color: string;
+}

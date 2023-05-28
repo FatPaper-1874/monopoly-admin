@@ -18,7 +18,6 @@ onUpdated(async () => {
 	_selectedIdList.value = currentCardList.map((item: any) => item.id);
 	const { total, chanceCardsList, current } = await getChanceCardsList(1, 10000);
 	_chanceCardList.value = chanceCardsList;
-	console.log(_chanceCardList.value);
 });
 
 const handleSelected = (selectedList: string[]) => {
@@ -30,8 +29,7 @@ const handleClose = () => {
 };
 
 const handleConfirm = async () => {
-	await saveChanceCardInMap(_selectedIdList.value, props.mapId);
-	emit("confirm");
+	emit("confirm", _selectedIdList.value);
 };
 </script>
 

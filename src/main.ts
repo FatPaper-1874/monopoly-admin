@@ -7,6 +7,7 @@ import router from "./router/index";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import { apiLogin } from "./utils/api/login";
 import "./utils/axios";
+
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";
 
@@ -25,4 +26,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 	app.component(key, component);
 }
 
-apiLogin("user1", "123123");
+apiLogin("admin", "123123");

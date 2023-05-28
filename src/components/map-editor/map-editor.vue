@@ -26,6 +26,7 @@ import chanceCardVue from "@/components/sample/chance-card.vue";
 import { tr } from "element-plus/es/locale";
 import ChanceCardSelectorVue from "@/components/chance-card-selector/chance-card-selector.vue";
 import { useClipboard } from "@vueuse/core";
+import { saveChanceCardInMap } from "@/utils/api/chanceCard";
 
 const props = defineProps({
 	column: {
@@ -147,7 +148,6 @@ const loadModelList = async () => {
 
 const loadChanceCardList = async () => {
 	const chanceCardsList = (await getChanceCardsListByMapId(_mapId)) as any;
-	console.log(chanceCardsList);
 
 	_chanceCardsList.value = chanceCardsList;
 };
@@ -239,7 +239,10 @@ const handleChanceCardSelectorClose = async () => {
 	_chanceCardSeletorVisible.value = false;
 };
 
-const handleChanceCardSelectorConfirm = async () => {
+const handleChanceCardSelectorConfirm = async (selectList: any) => {
+	console.log(selectList);
+
+	await saveChanceCardInMap(selectList, _mapId);
 	await loadChanceCardList();
 	_chanceCardSeletorVisible.value = false;
 };

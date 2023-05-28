@@ -1,10 +1,11 @@
 import { Component } from "vue";
-import mapVue from "@/views/manage/map-manage.vue";
-import modelVue from "@/views/manage/model-manage.vue";
+import mapManageVue from "@/views/manage/map-manage.vue";
+import modelManageVue from "@/views/manage/model-manage.vue";
 import mapEditorVue from "@/components/map-editor/map-editor.vue";
-import chanceCardVue from "@/views/manage/chance-card-manage.vue";
+import chanceCardManageVue from "@/views/manage/chance-card-manage.vue";
 import chanceCardEditorVue from "@/components/chance-card-editor/chance-card-editor.vue";
-import chanceCardSelectorVue from "@/components/chance-card-selector/chance-card-selector.vue";
+import userManageVue from "@/views/manage/user-manage.vue";
+import roleManageVue from "@/views/manage/role-manage.vue";
 
 interface menuItem {
 	path: string;
@@ -21,9 +22,17 @@ interface staticRouteItem {
 }
 
 export const menus: menuItem[] = [
-	{ path: "/map", menuName: "地图管理", name: "map", component: mapVue, icon: "MapLocation" },
-	{ path: "/model", menuName: "模型管理", name: "model", component: modelVue, icon: "Box" },
-	{ path: "/chance-card", menuName: "机会卡管理", name: "chance-card", component: chanceCardVue, icon: "CreditCard" },
+	{ path: "/user", menuName: "用户管理", name: "user", component: userManageVue, icon: "user" },
+	{ path: "/role", menuName: "游戏角色管理", name: "role", component: roleManageVue, icon: "crown" },
+	{ path: "/map", menuName: "地图管理", name: "map", component: mapManageVue, icon: "map-location-dot" },
+	{ path: "/model", menuName: "模型管理", name: "model", component: modelManageVue, icon: "box" },
+	{
+		path: "/chance-card",
+		menuName: "机会卡管理",
+		name: "chance-card",
+		component: chanceCardManageVue,
+		icon: "credit-card",
+	},
 ];
 
 export const staticRoute: staticRouteItem[] = [

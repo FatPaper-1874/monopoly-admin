@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ChanceCard, ItemType, MapItem, Property } from "../interfaces";
 
 export const createMap = async (name: string) => {
 	const res = await axios.post("/map/create", {
@@ -7,7 +8,7 @@ export const createMap = async (name: string) => {
 	return res;
 };
 
-export const getMapById = async (id: string) => {
+export const getMapInfoById = async (id: string) => {
 	const res = await axios.get("/map/info", { params: { id } });
 	return res;
 };
@@ -17,12 +18,17 @@ export const updateIndexList = async (id: string, indexList: string[]) => {
 };
 
 export const getItemTypesListByMapId = async (id: string) => {
-	const res = await axios.get("/map/item-type", { params: { id } });
+	const res = (await axios.get("/map/item-type", { params: { id } })) as ItemType[];
 	return res;
 };
 
 export const getMapItemsListByMapId = async (id: string) => {
-	const res = await axios.get("/map/map-item", { params: { id } });
+	const res = (await axios.get("/map/map-item", { params: { id } })) as MapItem[];
+	return res;
+};
+
+export const getMapIndexsByMapId = async (id: string) => {
+	const res = (await axios.get("/map/map-indexs", { params: { id } })) as string[];
 	return res;
 };
 
@@ -32,12 +38,12 @@ export const getStreetListByMapId = async (id: string) => {
 };
 
 export const getPropertyListByMapId = async (id: string) => {
-	const res = await axios.get("/map/property", { params: { id } });
+	const res = (await axios.get("/map/property", { params: { id } })) as Property[];
 	return res;
 };
 
 export const getChanceCardsListByMapId = async (id: string) => {
-	const res = await axios.get("/map/chance-card", { params: { id } });
+	const res = (await axios.get("/map/chance-card", { params: { id } })) as ChanceCard[];
 	return res;
 };
 

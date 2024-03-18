@@ -31,13 +31,14 @@ const legalIconName = computed(() => {
 
 <style lang="scss" scoped>
 .chance-card {
-	min-width: 10.5rem;
-	min-height: 14rem;
-	width: 10.5rem;
-	height: 14rem;
+  font-size: 16px;
+	min-width: 10.5em;
+	min-height: 14em;
+	width: 10.5em;
+	height: 14em;
 	background-color: #ffffff;
 	box-sizing: border-box;
-	border-radius: 20px;
+	border-radius: 1.3em;
 	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
 	user-select: none;
 	display: flex;

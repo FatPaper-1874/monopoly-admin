@@ -36,6 +36,6 @@ export const deleteChanceCard = async (id: string) => {
 	return await axios.delete("/chance-card/delete", { params: { id } });
 };
 
-export const saveChanceCardInMap = async (chanceCardIdList: string[], mapId: string) => {
+export const updateChanceCardInMap = async (chanceCardIdList: string[], mapId: string) => {
 	await axios.post("/chance-card/bind-map", { chanceCardIdList, mapId });
 };

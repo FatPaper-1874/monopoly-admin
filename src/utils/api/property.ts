@@ -31,7 +31,7 @@ export const updateProperty = async (
 	cost_lv0: number,
 	cost_lv1: number,
 	cost_lv2: number,
-	streetId: string,
+	streetId: string
 ) => {
 	return await axios.post("/property/update", {
 		id,
@@ -42,5 +42,11 @@ export const updateProperty = async (
 		cost_lv1,
 		cost_lv2,
 		streetId,
+	});
+};
+
+export const getPropertyById = async (id: string) => {
+	return await axios.get("/property/info", {
+		data: { id },
 	});
 };

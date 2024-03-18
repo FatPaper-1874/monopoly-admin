@@ -2,8 +2,9 @@
 import { deleteMap } from "@/utils/api/map";
 import { GameMap } from "@/utils/interfaces";
 import { ElMessageBox } from "element-plus";
-import { onMounted, onUnmounted } from "vue";
-import { ThreeBuilder } from "../../utils/three-builder";
+import { onMounted, onUnmounted, toRaw } from "vue";
+import { MapPreviewer } from "@/utils/three/MapPreviewer";
+import { getItemTypesFromMapItems } from "@/utils/index";
 
 const { map } = defineProps<{ map: GameMap }>();
 const emit = defineEmits(["delete", "edit"]);
@@ -34,18 +35,18 @@ const handleCommand = (command: string) => {
 	}
 };
 
-let threeBuilder: ThreeBuilder;
+let mapPreviewer: MapPreviewer;
 
 onMounted(async () => {
 	const threeCanvas = document.getElementById(map.id) as HTMLCanvasElement;
-	threeBuilder = new ThreeBuilder(threeCanvas);
-	await threeBuilder.loadModels(map.itemTypes);
-	await threeBuilder.loadMapItems(map.mapItems);
-	threeBuilder.lockCamera(true);
+	mapPreviewer = new MapPreviewer(threeCanvas);
+	await mapPreviewer.loadModels(map.itemTypes);
+	await mapPreviewer.loadMapItems(map.mapItems);
+	mapPreviewer.lockCamera(true);
 });
 
 onUnmounted(() => {
-	threeBuilder.distory();
+	mapPreviewer.distory();
 });
 </script>
 
@@ -77,11 +78,13 @@ onUnmounted(() => {
 	display: flex;
 	flex-direction: column;
 }
+
 .card-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
+
 .map-preview__canvas {
 	display: block;
 	border-radius: 10px;
@@ -89,3 +92,5 @@ onUnmounted(() => {
 	height: 100%;
 }
 </style>
+../../utils/map-previewer ../new-map-editor/utils/map-previewer
+../../utils/three/map-previewer

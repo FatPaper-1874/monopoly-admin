@@ -13,6 +13,8 @@ export interface ItemType {
 	color: string;
 	name: string;
 	model: Model;
+	effectCode?: string;
+	hasEvent: boolean;
 	size: number;
 }
 

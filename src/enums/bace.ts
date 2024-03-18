@@ -1,6 +1,6 @@
 export enum ChanceCardType {
 	ToSelf = "ToSelf",
-	ToSinglePlayer = "ToSinglePlayer",
-	ToMultiPlayers = "ToMultiPlayers",
+	ToOtherPlayer = "ToOtherPlayer",
 	ToProperty = "ToProperty",
+	ToMapItem = "ToMapItem",
 }

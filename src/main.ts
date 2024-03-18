@@ -1,11 +1,10 @@
 import { createApp } from "vue";
-import "./style.css";
+import "@/assets/style.scss";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import App from "./App.vue";
 import router from "./router/index";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
-import { apiLogin } from "./utils/api/login";
 import "./utils/axios";
 
 /* import the fontawesome core */
@@ -25,5 +24,3 @@ app.use(ElementPlus).use(router).component("font-awesome-icon", FontAwesomeIcon)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 	app.component(key, component);
 }
-
-apiLogin("admin", "123123");

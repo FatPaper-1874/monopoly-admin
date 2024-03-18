@@ -1,8 +1,9 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
-import { _BASEURL_ } from "@/bace";
+import { __MONOPOLYSERVER__ } from "@/global.config";
+import router from "@/router";
 
-axios.defaults.baseURL = _BASEURL_;
+axios.defaults.baseURL = __MONOPOLYSERVER__;
 axios.defaults.headers.common["Authorization"] = localStorage.getItem("token");
 
 //请求拦截器
@@ -10,11 +11,14 @@ axios.interceptors.request.use(
 	function (config) {
 		const token = localStorage.getItem("token");
 		if (token) {
-			config.headers!["Authorization"] = token;
+			config.headers.Authorization = token;
+		} else {
+			router.replace({ path: "/login" });
 		}
 		return config;
 	},
 	function (error) {
+		console.log("🚀 ~ file: index.d.ts:21 ~ error:", error);
 		return Promise.reject(error);
 	}
 );
@@ -44,6 +48,7 @@ axios.interceptors.response.use(
 					message: msg,
 				});
 				localStorage.setItem("token", "");
+				router.replace({ path: "/login" });
 			} else if (status == 500) {
 				//用户输入数据错误
 				ElMessage({
@@ -55,6 +60,21 @@ axios.interceptors.response.use(
 		return response.data.data;
 	},
 	function (error) {
+		const res = error.response;
+		const duration = 1000;
+		if (res && res.data) {
+			ElMessage({
+				type: "error",
+				message: res.data.msg || "解析请求错误失败",
+				duration,
+			});
+		}
+		if (res && res.status === 401) {
+			localStorage.removeItem("token");
+			setTimeout(() => {
+				router.replace({ name: "login" });
+			}, duration);
+		}
 		return Promise.reject(error);
 	}
 );

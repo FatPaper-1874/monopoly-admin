@@ -5,6 +5,9 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [vue()],
+	server: {
+		port: 7001,
+	},
 	resolve: {
 		alias: [
 			{

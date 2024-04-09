@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ElUpload, ElButton, ElMessage } from "element-plus";
 import { computed } from "vue";
-import { __MONOPOLYSERVER__ } from "@/global.config";
+import { __MONOPOLYSERVER__ } from "../../../../../../../global.config";
 
 const props = withDefaults(defineProps<{ mapId: string }>(), { mapId: "" });
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {nextTick, onMounted, watch, ref, onUpdated, onUnmounted, onBeforeMount, onBeforeUnmount} from "vue";
-import {__MONOPOLYSERVER__} from "@/global.config";
+import {__MONOPOLYSERVER__} from "../../../../../global.config";
 import {RolePreviewer} from "@/views/manage/role-manage/components/utils/RolePreviewer";
 import {RoleModel} from "@/views/manage/role-manage/components/utils/RoleModel";
 

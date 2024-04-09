@@ -1,7 +1,7 @@
 import {ThreeBase} from "@/utils/three/ThreeBase";
 import * as THREE from 'three'
 import {RoleModel} from "@/views/manage/role-manage/components/utils/RoleModel";
-import {__MONOPOLYSERVER__} from "@/global.config";
+import {__MONOPOLYSERVER__} from "../../../../../../global.config";
 
 export class RoleListCardPreviewer extends ThreeBase {
     private role: RoleModel | undefined;

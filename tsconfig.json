@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
+		"target": "es2016",
 		"useDefineForClassFields": true,
 		"module": "ESNext",
 		"moduleResolution": "Node",

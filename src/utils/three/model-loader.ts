@@ -1,6 +1,6 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { ItemType } from "@/utils/interfaces";
-import { __MONOPOLYSERVER__ } from "@/global.config";
+import { __MONOPOLYSERVER__ } from "../../../global.config";
 
 const gltfLoader = new GLTFLoader();
 

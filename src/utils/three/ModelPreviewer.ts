@@ -1,4 +1,4 @@
-import { __MONOPOLYSERVER__ } from "@/global.config";
+import { __MONOPOLYSERVER__ } from "../../../global.config";
 import { AmbientLight, Box3, Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 

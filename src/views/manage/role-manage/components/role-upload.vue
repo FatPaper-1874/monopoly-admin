@@ -4,7 +4,7 @@ import {computed, nextTick, onMounted, onUpdated, reactive, ref, watch} from "vu
 import {Animated2DBase} from "@/views/manage/role-manage/components/utils/Animated2DBase";
 import {createRole, preUpload, updateRole} from "@/utils/api/role";
 import RolePreviewer from "@/views/manage/role-manage/components/role-previewer.vue";
-import {__MONOPOLYSERVER__} from "@/global.config";
+import {__MONOPOLYSERVER__} from "../../../../../global.config";
 import {Role} from "@/utils/interfaces";
 
 const emit = defineEmits(["open", "opened", "close", "closed", "success", "error"]);

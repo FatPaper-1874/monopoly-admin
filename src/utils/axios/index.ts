@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
-import { __MONOPOLYSERVER__ } from "@/global.config";
+import { __MONOPOLYSERVER__ } from "../../../global.config";
 import router from "@/router";
 
 axios.defaults.baseURL = __MONOPOLYSERVER__;

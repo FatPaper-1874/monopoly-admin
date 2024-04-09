@@ -1,3 +1,4 @@
+// @ts-ignore
 interface PropertyInterface {
     //房产信息
     getId: () => string;

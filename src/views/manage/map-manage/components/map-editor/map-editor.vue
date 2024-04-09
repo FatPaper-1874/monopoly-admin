@@ -209,7 +209,7 @@ onBeforeUnmount(() => {
 			<div class="ui-right ui-item" v-if="focusData.mapItem">
 				<mapitem-info @linked="loadMapItems" :current-map-item="focusData.mapItem" :be-linked="isBelinked" />
 				<div>
-					<ElButton type="danger" @click="handleDeleteMapItem(focusData.mapItem.id)">删除当前MapItem</ElButton>
+					<ElButton type="danger" @click="handleDeleteMapItem(focusData.mapItem?.id || '')">删除当前MapItem</ElButton>
 				</div>
 				<property-form @submit="loadMapItems" v-if="isBelinked" :current-map-item="focusData.mapItem"
 					:street-list="mapInfo.streets" />

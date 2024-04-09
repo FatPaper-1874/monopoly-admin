@@ -36,6 +36,7 @@ onMounted(() => {
       ),
       EditorView.updateListener.of((v) => {
         const startNum = v.state.doc.toString().split('\n').findIndex((str) => str.includes('CODING AREA')) + 2;
+        //@ts-ignore
         const endNum = v.state.doc.toString().split('\n').findLastIndex((str) => str.includes('CODING AREA')) + 1;
         const tempStrArr = [];
         // console.log("startNum: ", startNum, "endNum: ", endNum);

@@ -2,7 +2,7 @@
 import { ref, onBeforeMount, onBeforeUnmount, reactive, onMounted } from "vue";
 import router from "@/router";
 import Background from "@/views/background/background.vue";
-import { __LOGINPAGEURL__ } from "@/global.config";
+import { __LOGINPAGEURL__ } from "../../../global.config";
 
 onMounted(async () => {
 	const _URLSearchParams = new URLSearchParams(location.search);

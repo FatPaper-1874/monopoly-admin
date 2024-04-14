@@ -5,7 +5,7 @@ import "element-plus/dist/index.css";
 import App from "./App.vue";
 import router from "./router/index";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
-import "./utils/axios";
+import "@/utils/axios";
 
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";

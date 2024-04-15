@@ -20,7 +20,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 library.add(fas);
 
 const app = createApp(App);
-app.use(ElementPlus).use(router).component("font-awesome-icon", FontAwesomeIcon).mount("#app");
+app.use(router).component("font-awesome-icon", FontAwesomeIcon).mount("#app");
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 	app.component(key, component);
 }

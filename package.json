@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit --skipLibCheck && vite build",
+    "build": "node --max-old-space-size=1536 node_modules/vite/bin/vite.js build && vue-tsc",
     "preview": "vite preview"
   },
   "dependencies": {

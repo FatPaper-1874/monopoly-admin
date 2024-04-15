@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "fix-memory-limit": "cross-env LIMIT=8192 increase-memory-limit",
     "dev": "vite",
     "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "preview": "vite preview"

@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "fix-memory-limit": "cross-env LIMIT=2048 increase-memory-limit",
     "build": "vue-tsc && vite build",
     "preview": "vite preview"
   },
@@ -23,7 +22,6 @@
     "pixi.js": "^7.2.0-beta",
     "sass": "^1.58.3",
     "three": "^0.149.0",
-    "unplugin-element-plus": "^0.8.0",
     "vue": "^3.2.45",
     "vue-router": "4"
   },

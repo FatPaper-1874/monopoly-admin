@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node --max-old-space-size=1024 node_modules/vite/bin/vite.js build && vue-tsc",
+    "fix-memory-limit": "cross-env LIMIT=2048 increase-memory-limit",
+    "build": "vue-tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -30,6 +31,8 @@
     "@types/node": "^18.15.3",
     "@types/pixi.js": "^5.0.0",
     "@vitejs/plugin-vue": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "increase-memory-limit": "^1.0.7",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^4.9.3",
     "unplugin-vue-components": "^0.26.0",

@@ -1,5 +1,4 @@
 import axios from "axios";
-import {__USERSERVER__} from "../../../global.config"
 
 export const updateUser = async (id: string, username: string, password: string, avatar: string, color: string) => {
     await axios.post("/user/update", {id, username, password, avatar, color});
@@ -31,7 +30,7 @@ export const getLoginCodeState = async (uuid: string) => {
 };
 
 export const isAdmin = async () => {
-    const res = (await axios.get(`${__USERSERVER__}/user/is-admin`)) as any;
+    const res = (await axios.get(`/user/is-admin`)) as any;
     console.log("🚀 ~ file: user.ts:35 ~ isAdmin ~ res:", res)
     return res as { isAdmin: boolean };
 };

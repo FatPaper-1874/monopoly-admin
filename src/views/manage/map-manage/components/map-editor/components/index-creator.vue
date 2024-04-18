@@ -27,32 +27,105 @@ async function handleAppendIndexList() {
   }
 };
 
-function findPath(itemList: MapItem[]) {
-  const tempList: MapItem[] = [];
-  const startItem: MapItem = itemList[0];
-  tempList.push(startItem);
-  for (let i = 0; i < itemList.length - 1; i++) {
-    const tempItem = tempList[tempList.length - 1];
-    for (let j = 0; j < itemList.length; j++) {
-      const nextTempItem = itemList[j];
-      if (isAdjacent(tempItem, nextTempItem) && !tempList.includes(nextTempItem)) {
-        tempList.push(nextTempItem);
-        break;
+function findPath(mapItems: MapItem[]): string[] | never {
+  if (mapItems.length === 0) {
+    throw new Error("输入数组不能为空");
+  }
+
+  const itemsCopy: MapItem[] = JSON.parse(JSON.stringify(mapItems));
+
+  const startingPoint: MapItem = itemsCopy[0];
+
+  const traversedItems: MapItem[] | null = traverseMap(itemsCopy, startingPoint);
+  if (!traversedItems) {
+    throw new Error("无法遍历整个数组");
+  }
+
+  return traversedItems.map(i => i.id);
+}
+
+function traverseMap(items: MapItem[], startPoint: MapItem): MapItem[] | null {
+  // 创建一个集合用于存储已经访问过的节点
+  const visited: { [key: string]: boolean } = {};
+  // 创建一个结果数组用于存储遍历的节点
+  const result: MapItem[] = [];
+
+  // 使用深度优先搜索（DFS）算法进行遍历
+  function dfs(node: MapItem) {
+    // 将当前节点标记为已访问
+    visited[`${node.x},${node.y}`] = true;
+    // 将当前节点加入结果数组
+    result.push(node);
+
+    // 寻找当前节点的相邻节点进行遍历
+    const neighbors = findNeighbors(node, items);
+    for (const neighbor of neighbors) {
+      // 如果相邻节点未被访问，则递归访问它
+      if (!visited[`${neighbor.x},${neighbor.y}`]) {
+        dfs(neighbor);
       }
     }
   }
-  if (!isAdjacent(tempList[0], tempList[tempList.length - 1])) throw Error("不是闭环的的地图");
-  return tempList.map((item) => item.id);
 
-  function isAdjacent(sourceItem: MapItem, targetItem: MapItem) {
-    return (
-      (sourceItem.x + 1 === targetItem.x && sourceItem.y === targetItem.y) ||
-      (sourceItem.x - 1 === targetItem.x && sourceItem.y === targetItem.y) ||
-      (sourceItem.y + 1 === targetItem.y && sourceItem.x === targetItem.x) ||
-      (sourceItem.y - 1 === targetItem.y && sourceItem.x === targetItem.x)
-    );
-  };
-};
+  // 开始遍历
+  dfs(startPoint);
+
+  // 检查是否所有节点都被访问到了
+  if (result.length !== items.length) {
+    return null;
+  }
+
+  return result;
+}
+
+function findNeighbors(node: MapItem, items: MapItem[]): MapItem[] {
+  const neighbors: MapItem[] = [];
+  const directions = [
+    { x: 1, y: 0 },  // 右
+    { x: -1, y: 0 }, // 左
+    { x: 0, y: 1 },  // 下
+    { x: 0, y: -1 }  // 上
+  ];
+
+  for (const dir of directions) {
+    const neighborX = node.x + dir.x;
+    const neighborY = node.y + dir.y;
+
+    const neighbor = items.find(item => item.x === neighborX && item.y === neighborY);
+    if (neighbor) {
+      neighbors.push(neighbor);
+    }
+  }
+
+  return neighbors;
+}
+
+// function findPath(itemList: MapItem[]) {
+//   const tempList: MapItem[] = [];
+//   const startItem: MapItem = itemList[0];
+//   tempList.push(startItem);
+//   for (let i = 0; i < itemList.length - 1; i++) {
+//     const tempItem = tempList[tempList.length - 1];
+//     for (let j = 0; j < itemList.length; j++) {
+//       const nextTempItem = itemList[j];
+//       if (isAdjacent(tempItem, nextTempItem) && !tempList.includes(nextTempItem)) {
+//         tempList.push(nextTempItem);
+//         break;
+//       }
+//     }
+//   }
+//   if (!isAdjacent(tempList[0], tempList[tempList.length - 1])) throw Error("不是闭环的的地图");
+//   return tempList.map((item) => item.id);
+//
+//   function isAdjacent(sourceItem: MapItem, targetItem: MapItem) {
+//     return (
+//       (sourceItem.x + 1 === targetItem.x && sourceItem.y === targetItem.y) ||
+//       (sourceItem.x - 1 === targetItem.x && sourceItem.y === targetItem.y) ||
+//       (sourceItem.y + 1 === targetItem.y && sourceItem.x === targetItem.x) ||
+//       (sourceItem.y - 1 === targetItem.y && sourceItem.x === targetItem.x)
+//     );
+//   };
+// };
 
 
 onBeforeMount(() => {

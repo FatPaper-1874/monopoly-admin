@@ -37,9 +37,10 @@ function findPath(mapItems: MapItem[]): string[] | never {
   const startingPoint: MapItem = itemsCopy[0];
 
   const traversedItems: MapItem[] | null = traverseMap(itemsCopy, startingPoint);
-  if (!traversedItems) {
+  if (!traversedItems || traversedItems.length == 0) {
     throw new Error("无法遍历整个数组");
   }
+  console.log(traversedItems)
 
   return traversedItems.map(i => i.id);
 }

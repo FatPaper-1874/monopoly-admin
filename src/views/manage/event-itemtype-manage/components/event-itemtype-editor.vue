@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { FormInstance, FormRules } from "element-plus";
 import { onBeforeMount, onMounted, reactive, ref, toRaw, watch } from "vue";
 import { useRoute } from "vue-router";
-import { ModelPreviewer } from "@/utils/three/ModelPreviewer";
+import { ModelPreviewer } from "@/utils/three/model-previewer";
 import { updateItemTypes, getItemTypeById, createEventItemType } from '@/utils/api/itemType';
 import router from "@/router";
 
@@ -73,7 +73,7 @@ watch(
 	(newModelId) => {
 		const newModel = _modelsList.value.find((m) => m.id === newModelId);
 		if (modelPreviewer) {
-			if (newModel) modelPreviewer.loadModel(newModel.fileName, true);
+			if (newModel) modelPreviewer.loadModel(newModel.fileUrl, true);
 			else modelPreviewer.clear();
 		}
 	}

@@ -21,14 +21,14 @@ export class ModelPreviewer {
 		this.renderer.render(this.scene, this.camera);
 	}
 
-	public async loadModel(modelFileName: string, rotatable: boolean) {
+	public async loadModel(modelFileUrl: string, rotatable: boolean) {
 		this.scene.clear();
-		if (!modelFileName) {
+		if (!modelFileUrl) {
 			this.renderer.render(this.scene, this.camera);
 			return;
 		}
 		const loader = new GLTFLoader();
-		const gltf = await loader.loadAsync(`${__MONOPOLYSERVER__}/static/models/${modelFileName}`);
+		const gltf = await loader.loadAsync(`http://${modelFileUrl}`);
 
 		const light = new AmbientLight(0xffffff, 1.5); // soft white light
 		this.scene.add(light);

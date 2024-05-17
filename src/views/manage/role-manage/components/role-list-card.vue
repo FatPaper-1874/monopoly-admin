@@ -12,7 +12,7 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 onMounted(() => {
   const canvasEl = canvasRef.value;
   if (!canvasEl) return;
-  const roleCardPreviewer = new RoleListCardPreviewer(canvasEl, role.filename)
+  const roleCardPreviewer = new RoleListCardPreviewer(canvasEl, role.baseUrl, role.fileName)
 })
 
 const handleEdit = () => {
@@ -45,7 +45,7 @@ const handleCommand = (command: string) => {
   <el-card class="role-preview-card" :body-style="{ width: '100%', flex: '1', 'box-sizing': 'border-box' }">
     <template #header>
       <div class="card-header">
-        <span :style="{color: role.color}">{{ role.rolename }}</span>
+        <span :style="{color: role.color}">{{ role.roleName }}</span>
         <el-dropdown trigger="click" @command="handleCommand">
           <el-button class="button" text style="color: #409eff">操作</el-button>
           <template #dropdown>

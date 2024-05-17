@@ -1,4 +1,5 @@
-import axios from "axios";
+import {_axios} from "@/utils/axios";
+
 
 export const createItemTypes = async (
 	name: string,
@@ -7,7 +8,7 @@ export const createItemTypes = async (
 	modelId: string,
 	mapId: string = ""
 ) => {
-	return await axios.post("/item-type/create", { name, color, size, modelId, mapId });
+	return await _axios.post("/item-type/create", { name, color, size, modelId, mapId });
 };
 
 export const createEventItemType = async (
@@ -17,7 +18,7 @@ export const createEventItemType = async (
 	modelId: string,
 	effectCode: string = ""
 ) => {
-	return await axios.post("/item-type/create-event", { name, color, size, modelId, effectCode });
+	return await _axios.post("/item-type/create-event", { name, color, size, modelId, effectCode });
 };
 
 export const updateItemTypes = async (
@@ -28,19 +29,19 @@ export const updateItemTypes = async (
 	modelId: string,
 	effectCode: string
 ) => {
-	return await axios.post("/item-type/update", { id, name, color, size, modelId, effectCode });
+	return await _axios.post("/item-type/update", { id, name, color, size, modelId, effectCode });
 };
 
 export const deleteItemType = async (id: string) => {
-	return await axios.delete("/item-type/delete", { params: { id } });
+	return await _axios.delete("/item-type/delete", { params: { id } });
 };
 
 export const getItemTypeById = async (id: string) => {
-	return (await axios.get("/item-type/info", { params: { id } })) as any;
+	return (await _axios.get("/item-type/info", { params: { id } })) as any;
 };
 
 export const getEvenItemtypesList = async (page: number, size: number) => {
-	const { total, eventItemtypesList, current } = (await axios.get("/item-type/list", {
+	const { total, eventItemtypesList, current } = (await _axios.get("/item-type/list", {
 		params: { page, size },
 	})) as any;
 	return { total, eventItemtypesList, current };

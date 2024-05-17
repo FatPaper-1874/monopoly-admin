@@ -311,7 +311,7 @@ export class MapEditor {
 	public setBackground(imageUrl: string) {
 		if (!imageUrl) return;
 		const textureLoader = new THREE.TextureLoader();
-		imageUrl = `${__MONOPOLYSERVER__}/static/backgrounds/${imageUrl}`;
+		imageUrl = `http://${imageUrl}`;
 		try {
 			this.background = textureLoader.load(imageUrl);
 			this.scene.background = this.background;
@@ -439,7 +439,7 @@ export class MapEditor {
 			if (!modelKeys.includes(itemType.model.id))
 				modelsUrlSet.add({
 					id: itemType.model.id,
-					url: `${__MONOPOLYSERVER__}/static/models/${itemType.model.fileName}`,
+					url: `http://${itemType.model.fileUrl}`,
 				});
 		});
 

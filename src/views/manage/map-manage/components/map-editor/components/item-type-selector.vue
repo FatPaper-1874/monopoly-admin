@@ -3,7 +3,7 @@ import { getItemTypesListByMapId } from "@/utils/api/map";
 import { ItemType } from "@/utils/interfaces";
 import { ref, onBeforeMount, onMounted, watch, nextTick, computed } from "vue";
 import { useRoute } from "vue-router";
-import { ModelPreviewer } from "@/utils/three/ModelPreviewer";
+import { ModelPreviewer } from "@/utils/three/model-previewer";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { ElButton, ElSelect, ElOption, ElOptionGroup, ElMessageBox } from "element-plus";
 import ItemTypeCreator from "./item-type-creator.vue";
@@ -33,7 +33,7 @@ let modelPreviewer: ModelPreviewer | undefined;
 function handleTypeSelect(newType: ItemType) {
 	if (modelPreviewer) {
 		if (newType) {
-			modelPreviewer.loadModel(newType.model.fileName, true);
+			modelPreviewer.loadModel(newType.model.fileUrl, true);
 		} else {
 			modelPreviewer.clear();
 		}
@@ -76,7 +76,7 @@ watch(
 
 				modelPreviewer = new ModelPreviewer(canvasEl);
 				if (currentType.value) {
-					modelPreviewer.loadModel(currentType.value.model.fileName, true);
+					modelPreviewer.loadModel(currentType.value.model.fileUrl, true);
 				}
 			} else {
 				modelPreviewer?.distory();

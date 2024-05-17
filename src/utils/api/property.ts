@@ -1,4 +1,5 @@
-import axios from "axios";
+import {_axios} from "@/utils/axios";
+
 export const createProperty = async (
 	name: string,
 	sellCost: number,
@@ -10,7 +11,7 @@ export const createProperty = async (
 	streetId: string,
 	mapId: string
 ) => {
-	return await axios.post("/property/create", {
+	return await _axios.post("/property/create", {
 		name,
 		sellCost,
 		buildCost,
@@ -33,7 +34,7 @@ export const updateProperty = async (
 	cost_lv2: number,
 	streetId: string
 ) => {
-	return await axios.post("/property/update", {
+	return await _axios.post("/property/update", {
 		id,
 		name,
 		sellCost,
@@ -46,7 +47,7 @@ export const updateProperty = async (
 };
 
 export const getPropertyById = async (id: string) => {
-	return await axios.get("/property/info", {
+	return await _axios.get("/property/info", {
 		data: { id },
 	});
 };

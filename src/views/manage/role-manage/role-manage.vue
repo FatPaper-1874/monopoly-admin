@@ -65,7 +65,7 @@ onMounted(async () => {
     </el-row>
 
     <div v-loading="isLoading" element-loading-text="Loading..." class="role-list-container">
-      <roleListCard @delete="handleDelete(role.id)" @edit="handleEdit(role)" v-for="role in _roleList" :key="role.id + role.filename"
+      <roleListCard @delete="handleDelete(role.id)" @edit="handleEdit(role)" v-for="role in _roleList" :key="role.id + role.fileName"
                     :role="role"></roleListCard>
     </div>
     <el-pagination

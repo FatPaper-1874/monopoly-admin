@@ -55,7 +55,6 @@ export class MapPreviewer {
 		modelList.forEach((model) => {
 			tempModelOBJ[model.name] = model.glft.scene;
 		});
-		console.log(tempModelOBJ);
 
 		this.models = tempModelOBJ;
 	}

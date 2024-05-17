@@ -3,7 +3,7 @@ import { deleteMap } from "@/utils/api/map";
 import { GameMap } from "@/utils/interfaces";
 import { ElMessageBox } from "element-plus";
 import { onMounted, onUnmounted, toRaw } from "vue";
-import { MapPreviewer } from "@/utils/three/MapPreviewer";
+import { MapPreviewer } from "@/utils/three/map-previewer";
 import { getItemTypesFromMapItems } from "@/utils/index";
 
 const { map } = defineProps<{ map: GameMap }>();

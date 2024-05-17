@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { deleteModel } from "@/utils/api/model";
-import { ModelPreviewer } from "@/utils/three/ModelPreviewer";
+import { ModelPreviewer } from "@/utils/three/model-previewer";
 import { Action, ElMessage, ElMessageBox } from "element-plus";
 import { onMounted, ref, onUnmounted } from "vue";
 import { Model } from "@/utils/interfaces";
@@ -14,7 +14,7 @@ onMounted(async () => {
 	const canvas = document.getElementById(model.id) as HTMLCanvasElement;
 
 	modelPreview = new ModelPreviewer(canvas);
-	modelPreview.loadModel(model.fileName, true);
+	modelPreview.loadModel(model.fileUrl, true);
 });
 
 onUnmounted(() => {

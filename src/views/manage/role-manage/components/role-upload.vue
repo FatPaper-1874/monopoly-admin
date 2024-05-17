@@ -16,11 +16,11 @@ onUpdated(() => {
   resetForm();
   const role = props.role
   if (role) {
-    roleForm.name = role.rolename;
+    roleForm.name = role.roleName;
     roleForm.color = role.color;
     nextTick(() => {
-      preViewRoleBaseUrl.value = `${__MONOPOLYSERVER__}/static/roles/`
-      preViewRoleFileName.value = role.filename;
+      preViewRoleBaseUrl.value = `http://`
+      preViewRoleFileName.value = role.fileName;
     })
   }
 })
@@ -119,7 +119,7 @@ const handlePreUpload = async () => {
   })
   const fileName = await preUpload(formData);
   if (fileName) {
-    preViewRoleBaseUrl.value = `${__MONOPOLYSERVER__}/static/temp/`;
+    preViewRoleBaseUrl.value = `http://`;
     preViewRoleFileName.value = fileName
   }
 }

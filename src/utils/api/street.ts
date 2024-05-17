@@ -1,4 +1,5 @@
-import axios from "axios";
+import {_axios} from "@/utils/axios";
+
 export const createStreet = async (name: string, increase: number, mapId: string) => {
-	await axios.post("/street/create", { name, increase, mapId });
+	return await _axios.post("/street/create", { name, increase, mapId });
 };

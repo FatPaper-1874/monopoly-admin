@@ -152,7 +152,7 @@ const createFormVisible = ref(false);
 }
 
 .item-type-selector-fade-leave-active {
-	transition: 0;
+	transition: none;
 }
 
 .item-type-selector-fade-enter-from,

@@ -9,7 +9,7 @@ import {FormInstance, FormRules} from "element-plus";
 import {onBeforeMount, onMounted, reactive, ref, toRaw} from "vue";
 import {useRoute} from "vue-router";
 import CodeEditor from "@/components/code-editor/index.vue";
-import ModelText from "./model-text?raw";
+import ModelText from "@/views/manage/chance-card-manage/components/model-text?raw";
 
 const modelText = ref<string>(ModelText);
 

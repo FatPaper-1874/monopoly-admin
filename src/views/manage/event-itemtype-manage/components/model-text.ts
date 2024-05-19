@@ -76,7 +76,7 @@ interface ChanceCardInterface {
     use: (sourcePlayer: PlayerInterface, target: PlayerInterface | PropertyInterface | PlayerInterface[] | PropertyInterface[]) => void;
 }
 
-function effectFunction(sourcePlayer: PlayerInterface, target: PlayerInterface | PropertyInterface | PlayerInterface[] | PropertyInterface[]){
+function effectFunction(arrivedPlayer: PlayerInterface){
     //CODING AREA
 
     //CODING AREA

@@ -9,9 +9,13 @@ import { useRoute } from "vue-router";
 import { ModelPreviewer } from "@/utils/three/model-previewer";
 import { updateItemTypes, getItemTypeById, createEventItemType } from '@/utils/api/itemType';
 import router from "@/router";
+import CodeEditor from "@/components/code-editor/index.vue";
+import ModelText from "./model-text?raw";
 
 const route = useRoute();
 const _eventItemtypeId = route.query.id as string;
+
+const modelText = ref<string>(ModelText);
 
 let modelPreviewer: ModelPreviewer;
 
@@ -21,6 +25,7 @@ const newTypeForm = reactive({
 	modelId: "",
 	color: "",
 	size: 1,
+  effectCode: ""
 });
 const itemTypeFormRef = ref<FormInstance>();
 
@@ -31,13 +36,11 @@ const itemTypeFormRules = reactive<FormRules>({
 	size: [{ required: true, message: "选择大小", trigger: "blur" }],
 });
 
-const handleCreateEventItemtype = async (formEl: FormInstance | undefined) => {
+const handleCreateEventItemType = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
 	await formEl.validate(async (valid) => {
 		if (valid) {
-			const { name, color, modelId, size } = { ...toRaw(newTypeForm) };
-
-      const effectCode = ""
+			const { name, color, modelId, size, effectCode } = { ...toRaw(newTypeForm) };
 
 			if (_eventItemtypeId) {
 				await updateItemTypes(_eventItemtypeId, name, color, size, modelId, effectCode);
@@ -59,29 +62,30 @@ const loadModelList = async () => {
 
 const loadItemTypeInfo = async (id: string) => {
 	const { name, color, size, effectCode, model } = await getItemTypeById(id);
-	Object.assign(newTypeForm, { name, color, size, modelId: model.id });
-	setEffectCode(effectCode);
+	Object.assign(newTypeForm, { name, color, size, modelId: model.id, effectCode });
 };
 
 //代码编辑器相关
 onMounted(async () => {
-
+  const canvasEl = document.querySelector("#model-preview") as HTMLCanvasElement;
+  modelPreviewer = new ModelPreviewer(canvasEl)
+  loadModelList()
+  if(_eventItemtypeId){
+    loadItemTypeInfo(_eventItemtypeId)
+  }
 });
 
 watch(
 	() => newTypeForm.modelId,
 	(newModelId) => {
 		const newModel = _modelsList.value.find((m) => m.id === newModelId);
+    console.log(newModel)
 		if (modelPreviewer) {
 			if (newModel) modelPreviewer.loadModel(newModel.fileUrl, true);
 			else modelPreviewer.clear();
 		}
 	}
 );
-
-const setEffectCode = async (effectCode: string) => {
-
-};
 </script>
 
 <template>
@@ -113,7 +117,7 @@ const setEffectCode = async (effectCode: string) => {
 					</el-form-item>
 
 					<el-form-item>
-						<el-button @click="handleCreateEventItemtype(itemTypeFormRef)" type="primary">保存类型</el-button>
+						<el-button @click="handleCreateEventItemType(itemTypeFormRef)" type="primary">保存类型</el-button>
 					</el-form-item>
 				</el-form>
 			</div>
@@ -128,7 +132,7 @@ const setEffectCode = async (effectCode: string) => {
 				</span>
 			</div>
 			<div class="editor-area">
-				<div id="code-editor"></div>
+        <code-editor :model-text="modelText" v-model="newTypeForm.effectCode"/>
 			</div>
 		</div>
 	</div>

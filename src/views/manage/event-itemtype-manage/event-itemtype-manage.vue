@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import router from "@/router/index";
 import { onMounted, ref } from "vue";
-import { ItemType } from "@/utils/interfaces";
+import { ItemType } from "@/interfaces/interfaces";
 import { getEvenItemtypesList } from "@/utils/api/itemType";
 import eventItemtypeListCard from "./components/event-itemtype-list-card.vue";
 

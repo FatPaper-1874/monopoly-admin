@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ItemType } from "@/utils/interfaces";
+import { ItemType } from "@/interfaces/interfaces";
 import { ModelPreviewer } from "@/utils/three/model-previewer";
 import { ElMessageBox } from "element-plus";
 import { onMounted, onUnmounted } from "vue";

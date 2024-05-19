@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { createItemTypes } from "@/utils/api/itemType";
 import { getModelList } from "@/utils/api/model";
-import { Model } from "@/utils/interfaces";
+import { Model } from "@/interfaces/interfaces";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { FormInstance, FormRules } from "element-plus";
 import { onBeforeMount, onMounted, reactive, ref, toRaw, watch } from "vue";

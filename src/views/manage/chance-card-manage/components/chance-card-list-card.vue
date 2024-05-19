@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { deleteChanceCard } from "@/utils/api/chanceCard";
-import { ChanceCard } from "@/utils/interfaces";
+import { ChanceCard } from "@/interfaces/interfaces";
 import { ElMessageBox } from "element-plus";
 import chanceCardItem from "@/components/sample/chance-card.vue";
 

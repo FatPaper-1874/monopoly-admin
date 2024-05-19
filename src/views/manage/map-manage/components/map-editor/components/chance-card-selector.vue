@@ -3,7 +3,7 @@ import chanceCardVue from "@/components/sample/chance-card.vue";
 import ItemSelector from "@/components/sample/item-selector.vue";
 import { getChanceCardsList } from "@/utils/api/chanceCard";
 import { getChanceCardsListByMapId } from "@/utils/api/map";
-import { ChanceCard } from "@/utils/interfaces";
+import { ChanceCard } from "@/interfaces/interfaces";
 import { onUpdated, ref } from "vue";
 
 const props = defineProps({ isVisible: { type: Boolean, default: false }, mapId: { type: String, default: "" } });

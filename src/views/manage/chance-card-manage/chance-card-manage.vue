@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import chanceCardListCard from "./components/chance-card-list-card.vue";
 import router from "@/router/index";
-import { ChanceCard } from "@/utils/interfaces";
+import { ChanceCard } from "@/interfaces/interfaces";
 import { onMounted, ref } from "vue";
 import { getChanceCardsList } from "@/utils/api/chanceCard";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from "@/utils/interfaces";
+import { User } from "@/interfaces/interfaces";
 import { ref, onMounted, reactive, toRaw } from "vue";
 import { getUserList, createUser, updateUser, deleteUser } from "@/utils/api/user";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

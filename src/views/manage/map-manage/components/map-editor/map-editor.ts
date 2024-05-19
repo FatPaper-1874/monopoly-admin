@@ -1,5 +1,5 @@
 import { __MONOPOLYSERVER__ } from "../../../../../../global.config";
-import { ItemType, MapItem } from "@/utils/interfaces";
+import { ItemType, MapItem } from "@/interfaces/interfaces";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";

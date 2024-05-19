@@ -3,7 +3,7 @@ import { deleteModel } from "@/utils/api/model";
 import { ModelPreviewer } from "@/utils/three/model-previewer";
 import { Action, ElMessage, ElMessageBox } from "element-plus";
 import { onMounted, ref, onUnmounted } from "vue";
-import { Model } from "@/utils/interfaces";
+import { Model } from "@/interfaces/interfaces";
 
 const { model } = defineProps<{ model: Model }>();
 const emit = defineEmits(["delete"]);

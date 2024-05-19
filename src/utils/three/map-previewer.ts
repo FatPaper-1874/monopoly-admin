@@ -1,6 +1,6 @@
 import { AmbientLight, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Group, Object3D, Box3, Color } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { GameMap, MapItem, ItemType } from "../interfaces";
+import { GameMap, MapItem, ItemType } from "@/interfaces/interfaces";
 import { loadItemTypeModules } from "./model-loader";
 
 export class MapPreviewer {

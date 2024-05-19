@@ -3,7 +3,7 @@ import { updateProperty, createProperty } from "@/utils/api/property";
 import { FormInstance, FormRules } from "element-plus";
 import { reactive, ref, toRaw, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { MapItem, Street } from "@/utils/interfaces";
+import { MapItem, Street } from "@/interfaces/interfaces";
 
 const props = withDefaults(defineProps<{ streetList: Array<Street>; currentMapItem: MapItem | undefined }>(), {
 	streetList: () => new Array<Street>(),

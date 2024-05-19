@@ -1,5 +1,5 @@
 import {_axios} from "@/utils/axios";
-import { ChanceCard, ItemType, MapItem, Property } from "../interfaces";
+import { ChanceCard, ItemType, MapItem, Property } from "@/interfaces/interfaces";
 
 export const createMap = async (name: string) => {
 	const res = await _axios.post("/map/create", {

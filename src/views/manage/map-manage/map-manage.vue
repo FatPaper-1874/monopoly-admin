@@ -2,7 +2,7 @@
 import { ref, onMounted, reactive } from "vue";
 import { createMap, getMapsList } from "@/utils/api/map";
 import router from "@/router/index";
-import { GameMap } from "@/utils/interfaces";
+import { GameMap } from "@/interfaces/interfaces";
 import MapListCard from "@/components/sample/map-list-card.vue";
 import { FormInstance, FormRules } from "element-plus";
 

@@ -1,4 +1,4 @@
-import { MapItem } from "@/utils/interfaces";
+import { MapItem } from "@/interfaces/interfaces";
 import * as THREE from "three";
 
 export function createLineWithArrow(

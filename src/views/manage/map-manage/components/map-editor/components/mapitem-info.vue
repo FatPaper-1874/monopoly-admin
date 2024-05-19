@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { linkMapItem } from "@/utils/api/mapItem";
-import { MapItem } from "@/utils/interfaces";
+import { MapItem } from "@/interfaces/interfaces";
 import { computed, ref } from "vue";
 import { ElMessage } from "element-plus";
 

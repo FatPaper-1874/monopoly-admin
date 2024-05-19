@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { getItemTypesListByMapId, updateIndexList } from '@/utils/api/map';
-import { ItemType, MapItem } from '@/utils/interfaces';
+import { ItemType, MapItem } from '@/interfaces/interfaces';
 import { ElMessage } from 'element-plus';
 import { onBeforeMount, ref } from 'vue';
 import { useRoute } from 'vue-router';

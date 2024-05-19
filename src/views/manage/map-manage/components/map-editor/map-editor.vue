@@ -9,7 +9,7 @@ import {
 	getPropertyListByMapId,
 } from "@/utils/api/map";
 import { createMapItem, deleteMapItem } from "@/utils/api/mapItem";
-import { ChanceCard, ItemType, MapItem, Property, Street } from "@/utils/interfaces";
+import { ChanceCard, ItemType, MapItem, Property, Street } from "@/interfaces/interfaces";
 import { ElButton } from "element-plus";
 import { computed, onBeforeUnmount, onMounted, reactive, ref, toRaw, watch } from "vue";
 import { useRoute } from "vue-router";

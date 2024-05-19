@@ -51,6 +51,13 @@ export const menus: menuItem[] = [
         component: () => import('@/views/manage/event-itemtype-manage/event-itemtype-manage.vue'),
         icon: "wand-magic-sparkles",
     },
+    {
+        path: "/music",
+        menuName: "音乐管理",
+        name: "music",
+        component: () => import('@/views/manage/music-manage/music-manage.vue'),
+        icon: "headset",
+    },
 ];
 
 export const staticRoute: staticRouteItem[] = [

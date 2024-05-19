@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import roleListCard from "./components/role-list-card.vue";
 import {deleteModel, getRoleList} from "@/utils/api/role";
-import {ChanceCard, Role} from "@/utils/interfaces";
+import {ChanceCard, Role} from "@/interfaces/interfaces";
 import {onMounted, ref} from "vue";
 import roleUpload from "./components/role-upload.vue";
 

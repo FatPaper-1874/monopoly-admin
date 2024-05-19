@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { deleteMap } from "@/utils/api/map";
-import { GameMap } from "@/utils/interfaces";
+import { GameMap } from "@/interfaces/interfaces";
 import { ElMessageBox } from "element-plus";
 import { onMounted, onUnmounted, toRaw } from "vue";
 import { MapPreviewer } from "@/utils/three/map-previewer";

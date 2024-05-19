@@ -1,4 +1,4 @@
-import {MapItem} from "./interfaces";
+import {MapItem} from "@/interfaces/interfaces";
 
 export function getItemTypesFromMapItems(mapItems: MapItem[]) {
     const itemTypesIdSet = new Set<string>();

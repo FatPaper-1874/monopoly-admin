@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ElMessageBox} from "element-plus";
-import {Role} from "@/utils/interfaces";
+import {Role} from "@/interfaces/interfaces";
 import {computed, onMounted, ref} from "vue";
 import {RoleListCardPreviewer} from "./utils/RoleListCardPreviewer";
 

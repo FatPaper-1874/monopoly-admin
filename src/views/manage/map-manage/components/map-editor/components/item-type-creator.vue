@@ -2,7 +2,7 @@
 import { createItemTypes } from "@/utils/api/itemType";
 import { getItemTypesListByMapId } from "@/utils/api/map";
 import { getModelList } from "@/utils/api/model";
-import { ItemType, Model } from "@/utils/interfaces";
+import { ItemType, Model } from "@/interfaces/interfaces";
 import { FormInstance, FormRules, ElDialog, ElForm, ElFormItem } from "element-plus";
 import { ref, onBeforeMount, reactive, toRaw, computed } from "vue";
 import { useRoute } from "vue-router";

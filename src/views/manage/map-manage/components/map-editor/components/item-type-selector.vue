@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getItemTypesListByMapId } from "@/utils/api/map";
-import { ItemType } from "@/utils/interfaces";
+import { ItemType } from "@/interfaces/interfaces";
 import { ref, onBeforeMount, onMounted, watch, nextTick, computed } from "vue";
 import { useRoute } from "vue-router";
 import { ModelPreviewer } from "@/utils/three/model-previewer";

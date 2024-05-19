@@ -25,6 +25,12 @@ export interface Model {
     fileName: string;
 }
 
+export interface Music {
+    id: string,
+    name: string,
+    url: string,
+}
+
 export interface Property {
     id: string;
     name: string;

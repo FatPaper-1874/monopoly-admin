@@ -5,7 +5,7 @@ import {Animated2DBase} from "@/views/manage/role-manage/components/utils/Animat
 import {createRole, preUpload, updateRole} from "@/utils/api/role";
 import RolePreviewer from "@/views/manage/role-manage/components/role-previewer.vue";
 import {__MONOPOLYSERVER__} from "../../../../../global.config";
-import {Role} from "@/utils/interfaces";
+import {Role} from "@/interfaces/interfaces";
 
 const emit = defineEmits(["open", "opened", "close", "closed", "success", "error"]);
 

@@ -24,8 +24,7 @@ import { OperationMode } from "./enum/OperationMode";
 import { MapEditor } from "./map-editor";
 import { isMapItemBeLinked } from "./utils/index";
 import ChanceCardSelector from "./components/chance-card-selector.vue";
-import { updateChanceCard } from "@/utils/api/chanceCard";
-import { updateChanceCardInMap } from '../../../../../utils/api/chanceCard';
+import { updateChanceCardInMap } from '@/utils/api/chanceCard';
 
 let mapEditor: MapEditor;
 
@@ -173,7 +172,10 @@ onMounted(async () => {
 
 	mapEditor.onItemClick((x, y, id) => {
 		const focusItem = toRaw(mapInfo.mapItems.find((item) => item.id == id));
+		console.log(focusItem);
+		
 		if (focusItem) focusData.mapItem = focusItem;
+		console.log(focusData.mapItem);
 	});
 
 	await mapEditor.setItemTypesList(toRaw(mapInfo.itemTypes));

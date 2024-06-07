@@ -10,6 +10,7 @@ import { OperationMode } from "./enum/OperationMode";
 import { applyOpacityToObject, createLineWithArrow } from "./utils";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
 import { id } from "element-plus/es/locale";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
 export class MapEditor {
 	//静态数据
@@ -247,16 +248,31 @@ export class MapEditor {
 		if (throughInstances.length > 0) {
 			const firstInstance = throughInstances[0];
 			const target = firstInstance.object;
-			if (target.parent) {
-				this.selectOutlinePass.selectedObjects = [target.parent];
-				if (target.parent.userData.id && target.parent.userData.position) {
-					const position = target.parent.userData.position;
-					const id = target.parent.userData.id;
+			console.log(target);
+
+			let temp: THREE.Object3D | null = target;
+			while(temp){
+				if(temp.userData.id && temp.userData.position){
+					const position = temp.userData.position;
+					const id = temp.userData.id;
 					this.itemSelected(position.x, position.y, id);
+					this.selectOutlinePass.selectedObjects = [temp];
+					break;
+				} else {
+					temp = temp.parent;
 				}
-			} else {
-				this.selectOutlinePass.selectedObjects = [target];
 			}
+			
+			// if (target.parent) {
+			// 	this.selectOutlinePass.selectedObjects = [target.parent];
+			// 	if (target.parent.userData.id && target.parent.userData.position) {
+			// 		const position = target.parent.userData.position;
+			// 		const id = target.parent.userData.id;
+			// 		this.itemSelected(position.x, position.y, id);
+			// 	}
+			// } else {
+			// 	this.selectOutlinePass.selectedObjects = [target];
+			// }
 		}
 	}
 
@@ -445,6 +461,9 @@ export class MapEditor {
 
 		const modelsUrlList = Array.from(modelsUrlSet);
 		const gltfLoader = new GLTFLoader();
+		const draco = new DRACOLoader();
+		draco.setDecoderPath('./draco/');
+		gltfLoader.setDRACOLoader(draco);
 		modelsUrlList.forEach((item) => {
 			const promise = new Promise<{ id: string; glft: GLTF }>((resolve, reject) => {
 				gltfLoader.load(

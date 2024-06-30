@@ -9,8 +9,11 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { OperationMode } from "./enum/OperationMode";
 import { applyOpacityToObject, createLineWithArrow } from "./utils";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
-import { id } from "element-plus/es/locale";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
+import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader";
+
+const BLOCK_HEIGHT = 0.09;
 
 export class MapEditor {
 	//静态数据
@@ -18,6 +21,7 @@ export class MapEditor {
 
 	//动态数据
 	private mode: OperationMode;
+	private currentRotation: 0 | 1 | 2 | 3;
 	//动态数据--缓存
 	private itemTypes: Map<string, ItemType> = new Map();
 	private mapItems: Map<string, MapItem> = new Map();
@@ -32,6 +36,7 @@ export class MapEditor {
 	private camera: THREE.Camera;
 	private renderer: THREE.WebGLRenderer;
 	private ambientLight: THREE.AmbientLight;
+	// private pointLight: THREE.PointLight;
 	private controls: OrbitControls;
 	private composer: EffectComposer;
 
@@ -51,18 +56,20 @@ export class MapEditor {
 	private renderPass: RenderPass;
 
 	//回调函数
-	private createItemCallback?: (x: number, y: number, itemType: ItemType) => void;
+	private createItemCallback?: (x: number, y: number, rotation: 0 | 1 | 2 | 3, itemType: ItemType) => void;
 	private itemSelectedCallback?: (x: number, y: number, id: string) => void;
 
 	constructor(canvasEl: HTMLCanvasElement, size: number = 21, operationMode: OperationMode = OperationMode.MOVE) {
+		this.currentRotation = 0;
 		this.canvasEl = canvasEl;
 		this.size = size;
 		this.mode = operationMode;
 		this.scene = new THREE.Scene();
 		this.scene.background = new THREE.Color(0xffffff);
-		this.renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true });
+		this.renderer = new THREE.WebGLRenderer({ canvas: canvasEl });
 		this.renderer.setSize(this.canvasEl.clientWidth, this.canvasEl.clientHeight);
-		this.camera = new THREE.PerspectiveCamera(45, canvasEl.clientWidth / canvasEl.clientHeight, 1, 100);
+		this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+		this.camera = new THREE.PerspectiveCamera(45, canvasEl.clientWidth / canvasEl.clientHeight, 0.1, 1000);
 		this.camera.position.set(this.size / 2, (this.size * 3) / 2, this.size * 1.3);
 		this.scene.add(this.camera);
 		this.scene.add(this.linkLinesContainer);
@@ -92,8 +99,10 @@ export class MapEditor {
 		this.composer.addPass(this.previewOutlinePass);
 		this.composer.addPass(this.selectOutlinePass);
 		this.composer.addPass(this.linkItemOutlinePass);
+		const gammaPass = new ShaderPass(GammaCorrectionShader);
+		this.composer.addPass(gammaPass);
 
-		this.ambientLight = new THREE.AmbientLight(0xffffff, 1);
+		this.ambientLight = new THREE.AmbientLight(0xffffff, 5);
 		this.scene.add(this.ambientLight);
 
 		const planeGeometry = new THREE.PlaneGeometry(this.size, this.size);
@@ -126,11 +135,16 @@ export class MapEditor {
 
 		this.initOutlinePass();
 		this.initMouseListener();
+		this.initKeyBoardListener();
 	}
 
 	private initMouseListener() {
-		this.canvasEl.addEventListener("mousemove", this.onMouseMove.bind(this));
-		this.canvasEl.addEventListener("click", this.onMouseClick.bind(this));
+		this.canvasEl.addEventListener("mousemove", this.handleMouseMove.bind(this));
+		this.canvasEl.addEventListener("click", this.handleMouseClick.bind(this));
+	}
+
+	private initKeyBoardListener() {
+		document.addEventListener("keyup", this.handleKeyUp.bind(this));
 	}
 
 	private initOutlinePass() {
@@ -164,7 +178,7 @@ export class MapEditor {
 		this.linkItemOutlinePass.usePatternTexture = false;
 	}
 
-	private onMouseMove(event: MouseEvent) {
+	private handleMouseMove(event: MouseEvent) {
 		const mouseX = (event.offsetX / this.canvasEl.clientWidth) * 2 - 1;
 		const mouseY = -(event.offsetY / this.canvasEl.clientHeight) * 2 + 1;
 
@@ -192,7 +206,7 @@ export class MapEditor {
 			const firstInstance = throughInstances[0];
 			const x = Math.floor(firstInstance.point.x);
 			const z = Math.floor(firstInstance.point.z);
-			if (this.previewBoxInCreate) this.setItemOnMap(this.previewBoxInCreate, x, z);
+			if (this.previewBoxInCreate) this.setItemOnMap(this.previewBoxInCreate, x, z, this.currentRotation);
 		}
 	}
 
@@ -213,7 +227,7 @@ export class MapEditor {
 
 	private handleMouseMoveInMove() {}
 
-	private onMouseClick(event: MouseEvent) {
+	private handleMouseClick(event: MouseEvent) {
 		const mouseX = (event.offsetX / this.canvasEl.clientWidth) * 2 - 1;
 		const mouseY = -(event.offsetY / this.canvasEl.clientHeight) * 2 + 1;
 
@@ -231,15 +245,24 @@ export class MapEditor {
 		}
 	}
 
+	private handleKeyUp(event: KeyboardEvent) {
+		if (this.mode !== OperationMode.CREATE || !this.previewBoxInCreate) return;
+		if (event.key === "r" || event.key === "R") {
+			this.currentRotation = (++this.currentRotation % 4) as 0 | 1 | 2 | 3;
+			this.previewBoxInCreate.rotation.y = (Math.PI / 2) * this.currentRotation;
+		}
+	}
+
 	private handleMouseClickInCreate() {
 		const throughInstances = this.raycaster.intersectObjects([this.plane], false);
-		// console.log(throughInstances);
 		if (throughInstances.length > 0) {
 			const firstInstance = throughInstances[0];
 			const x = Math.floor(firstInstance.point.x);
 			const z = Math.floor(firstInstance.point.z);
-			if (this.currentItemType) this.createItem(x, z, this.currentItemType);
-			if (this.previewBoxInCreate) this.setItemOnMap(this.previewBoxInCreate, x, z);
+			const rotation = this.currentRotation;
+			if (this.currentItemType) this.createItem(x, z, rotation, this.currentItemType);
+			if (this.previewBoxInCreate) this.setItemOnMap(this.previewBoxInCreate, x, z, this.currentRotation);
+			this.currentRotation = 0;
 		}
 	}
 
@@ -251,8 +274,8 @@ export class MapEditor {
 			console.log(target);
 
 			let temp: THREE.Object3D | null = target;
-			while(temp){
-				if(temp.userData.id && temp.userData.position){
+			while (temp) {
+				if (temp.userData.id && temp.userData.position) {
 					const position = temp.userData.position;
 					const id = temp.userData.id;
 					this.itemSelected(position.x, position.y, id);
@@ -262,7 +285,7 @@ export class MapEditor {
 					temp = temp.parent;
 				}
 			}
-			
+
 			// if (target.parent) {
 			// 	this.selectOutlinePass.selectedObjects = [target.parent];
 			// 	if (target.parent.userData.id && target.parent.userData.position) {
@@ -276,15 +299,15 @@ export class MapEditor {
 		}
 	}
 
-	private createItem(x: number, y: number, itemType: ItemType) {
-		if (this.createItemCallback) this.createItemCallback(x, y, itemType);
+	private createItem(x: number, y: number, rotation: 0 | 1 | 2 | 3, itemType: ItemType) {
+		if (this.createItemCallback) this.createItemCallback(x, y, rotation, itemType);
 	}
 
 	private itemSelected(x: number, y: number, id: string) {
 		if (this.itemSelectedCallback) this.itemSelectedCallback(x, y, id);
 	}
 
-	public onCreateItem(f: (x: number, y: number, itemType: ItemType) => void) {
+	public onCreateItem(f: (x: number, y: number, rotation: 0 | 1 | 2 | 3, itemType: ItemType) => void) {
 		this.createItemCallback = f;
 	}
 
@@ -292,8 +315,9 @@ export class MapEditor {
 		this.itemSelectedCallback = f;
 	}
 
-	private setItemOnMap(object: THREE.Object3D, x: number, z: number, y: number = 0) {
-		object.position.set(x + 0.5, y + 0.5, z + 0.5);
+	private setItemOnMap(object: THREE.Object3D, x: number, z: number, rotation = 0, y: number = 0) {
+		object.position.set(x + 0.5, y + BLOCK_HEIGHT, z + 0.5);
+		object.rotation.y = (Math.PI / 2) * rotation;
 	}
 
 	public setMode(newMode: OperationMode) {
@@ -303,6 +327,8 @@ export class MapEditor {
 		const isSelectMode = newMode == OperationMode.SELECT;
 		this.controls.enabled = isMoveMode;
 		if (isCreateMode) {
+			this.currentRotation = 0;
+			this.previewBoxInCreate && (this.previewBoxInCreate.rotation.y = (Math.PI / 2) * this.currentRotation);
 			if (this.currentItemType) {
 				this.updatePreviewBox(this.currentItemType);
 				if (this.previewBoxInCreate) this.scene.add(this.previewBoxInCreate);
@@ -344,8 +370,9 @@ export class MapEditor {
 			if (newMapItemGroup) {
 				newMapItemGroup.scale.set(0.5, 0.5, 0.5);
 				newMapItemGroup.userData["position"] = { x: mapItem.x, y: mapItem.y };
+				newMapItemGroup.userData["rotation"] = mapItem.rotation;
 				newMapItemGroup.userData["id"] = mapItem.id;
-				this.setItemOnMap(newMapItemGroup, mapItem.x, mapItem.y);
+				this.setItemOnMap(newMapItemGroup, mapItem.x, mapItem.y, mapItem.rotation);
 				this.mapItemsInScene.set(mapItem.id, newMapItemGroup);
 				this.scene.add(newMapItemGroup);
 			}
@@ -398,10 +425,10 @@ export class MapEditor {
 				if (mapItemObj && targetItemObj) {
 					const lineStart = new THREE.Vector3();
 					lineStart.copy(mapItemObj.position);
-					lineStart.y = 1.05;
+					lineStart.y = 0.2;
 					const lineEnd = new THREE.Vector3();
 					lineEnd.copy(targetItemObj.position);
-					lineEnd.y = 1.05;
+					lineEnd.y = 0.2;
 					// this.linesContainer.add(createLineWithArrow(lineStart, lineEnd, 0.5, 0.5, 0.5, new THREE.Color(0xff0000)));
 					const geometry = new MeshLineGeometry();
 					geometry.setPoints([lineStart, lineEnd]);
@@ -423,17 +450,23 @@ export class MapEditor {
 	public updateIndexPath(mapIndexs: string[]) {
 		this.pathLinesContainer.clear();
 		const pathPoints: THREE.Vector3[] = [];
-		mapIndexs.forEach((id) => {
-			const mapItem = this.mapItemsInScene.get(id);
+		let firstItemPosition = new THREE.Vector3();
+		for (let index = 0; index < mapIndexs.length; index++) {
+			const mapItemId = mapIndexs[index];
+			const mapItem = this.mapItemsInScene.get(mapItemId);
 			if (mapItem) {
 				const p = new THREE.Vector3();
 				p.copy(mapItem.position);
-				p.y = 1.06;
+				p.y = 0.2;
 				pathPoints.push(p);
+				if (index === 0) {
+					firstItemPosition = p;
+				}
 			} else {
 				throw new Error("错误的路径");
 			}
-		});
+		}
+		pathPoints.push(firstItemPosition);
 
 		const geometry = new MeshLineGeometry();
 		geometry.setPoints(pathPoints);
@@ -462,7 +495,7 @@ export class MapEditor {
 		const modelsUrlList = Array.from(modelsUrlSet);
 		const gltfLoader = new GLTFLoader();
 		const draco = new DRACOLoader();
-		draco.setDecoderPath('./draco/');
+		draco.setDecoderPath("./draco/");
 		gltfLoader.setDRACOLoader(draco);
 		modelsUrlList.forEach((item) => {
 			const promise = new Promise<{ id: string; glft: GLTF }>((resolve, reject) => {
@@ -501,7 +534,8 @@ export class MapEditor {
 	}
 
 	public destory() {
-		this.canvasEl.removeEventListener("mousemove", this.onMouseMove);
-		this.canvasEl.removeEventListener("click", this.onMouseClick);
+		this.canvasEl.removeEventListener("mousemove", this.handleMouseMove);
+		this.canvasEl.removeEventListener("click", this.handleMouseClick);
+		document.removeEventListener("keyup", this.handleKeyUp);
 	}
 }

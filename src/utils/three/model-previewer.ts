@@ -17,8 +17,6 @@ export class ModelPreviewer {
 		this.camera = new PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
 		this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
-		const light = new AmbientLight(0xffffff, 1.5); // soft white light
-		this.scene.add(light);
 		this.renderer.render(this.scene, this.camera);
 	}
 
@@ -33,20 +31,19 @@ export class ModelPreviewer {
 		draco.setDecoderPath('./draco/');
 		loader.setDRACOLoader(draco);
 		const gltf = await loader.loadAsync(`http://${modelFileUrl}`);
-
-		const light = new AmbientLight(0xffffff, 1.5); // soft white light
-		this.scene.add(light);
-
 		const model = gltf.scene;
 		this.scene.add(model);
 		const box = new Box3().setFromObject(model);
 		const center = box.getCenter(new Vector3());
-		const distance = box.getSize(new Vector3()).length() + 1;
+		const distance = box.getSize(new Vector3()).length();
 		this.camera.position.copy(center);
 		this.camera.position.x += distance;
 		this.camera.position.y += distance;
 		this.camera.position.z += distance;
 		this.camera.lookAt(center);
+		
+		const light = new AmbientLight(0xffffff, 5); // soft white light
+		this.scene.add(light);
 
 		this.renderer.render(this.scene, this.camera);
 

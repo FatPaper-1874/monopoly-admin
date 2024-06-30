@@ -1,4 +1,15 @@
-import { AmbientLight, PerspectiveCamera, Scene, Vector3, WebGLRenderer, Group, Object3D, Box3, Color } from "three";
+import {
+	AmbientLight,
+	PerspectiveCamera,
+	Scene,
+	Vector3,
+	WebGLRenderer,
+	Group,
+	Object3D,
+	Box3,
+	Color,
+	PointLight,
+} from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GameMap, MapItem, ItemType } from "@/interfaces/interfaces";
 import { loadItemTypeModules } from "./model-loader";
@@ -32,7 +43,7 @@ export class MapPreviewer {
 		// this.scene.add(axesHelper);
 
 		//创建灯光
-		const light = new AmbientLight(0xffffff, 1.2); // soft white light
+		const light = new AmbientLight(0xffffff, 5); // soft white light
 		this.scene.add(light);
 
 		// 创建轨道控制器
@@ -66,6 +77,7 @@ export class MapPreviewer {
 			const tempModule = this.models[item.type.name].clone();
 			tempModule.scale.set(0.5, 0.5, 0.5);
 			tempModule.position.set(item.x + item.type.size / 2, 0, item.y + item.type.size / 2);
+			tempModule.rotation.y = (Math.PI / 2) * item.rotation;
 			this.mapContainer.add(tempModule);
 		});
 	}

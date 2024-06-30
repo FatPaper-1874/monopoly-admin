@@ -24,7 +24,7 @@ import { OperationMode } from "./enum/OperationMode";
 import { MapEditor } from "./map-editor";
 import { isMapItemBeLinked } from "./utils/index";
 import ChanceCardSelector from "./components/chance-card-selector.vue";
-import { updateChanceCardInMap } from '@/utils/api/chanceCard';
+import { updateChanceCardInMap } from "@/utils/api/chanceCard";
 
 let mapEditor: MapEditor;
 
@@ -145,9 +145,9 @@ const loadMapIndexs = async () => {
 	mapEditor && mapEditor.updateIndexPath(mapInfo.mapIndexs);
 };
 
-const handleCreateMapItem = async (x: number, y: number, itemType: ItemType) => {
+const handleCreateMapItem = async (x: number, y: number, rotation: 0 | 1 | 2 | 3, itemType: ItemType) => {
 	const id = `item-${x}-${y}`;
-	await createMapItem(id, x, y, itemType.id, mapId);
+	await createMapItem(id, x, y, rotation, itemType.id, mapId);
 	await loadMapItems();
 };
 
@@ -173,9 +173,8 @@ onMounted(async () => {
 	mapEditor.onItemClick((x, y, id) => {
 		const focusItem = toRaw(mapInfo.mapItems.find((item) => item.id == id));
 		console.log(focusItem);
-		
+
 		if (focusItem) focusData.mapItem = focusItem;
-		console.log(focusData.mapItem);
 	});
 
 	await mapEditor.setItemTypesList(toRaw(mapInfo.itemTypes));
@@ -189,7 +188,7 @@ const chanceCardSelectorVisible = ref(false);
 const handleChanCardSelect = (chanceCardIdList: string[]) => {
 	updateChanceCardInMap(toRaw(chanceCardIdList), mapId);
 	chanceCardSelectorVisible.value = false;
-}
+};
 
 onBeforeUnmount(() => {
 	if (mapEditor) mapEditor.destory();
@@ -201,11 +200,14 @@ onBeforeUnmount(() => {
 		<div class="map-editor-ui">
 			<div class="ui-left ui-item">
 				<mode-switcher v-model:operation-mode="focusData.operationMode"></mode-switcher>
-				<item-type-selector @created="loadItemTypes" v-model:current-type="focusData.itemType"
-					:visible="focusData.operationMode === OperationMode.CREATE"></item-type-selector>
+				<item-type-selector
+					@created="loadItemTypes"
+					v-model:current-type="focusData.itemType"
+					:visible="focusData.operationMode === OperationMode.CREATE"
+				></item-type-selector>
 				<ElButton type="primary" @click="chanceCardSelectorVisible = true">地图的机会卡</ElButton>
 				<background-uploader @success="handleBgUploadSuccess" :map-id="mapId"></background-uploader>
-				<index-creator :map-itemslist="mapInfo.mapItems" @submit="loadMapIndexs" />
+				<index-creator :item-type-list="mapInfo.itemTypes" :map-itemslist="mapInfo.mapItems" @submit="loadMapIndexs" />
 				<street-creator />
 			</div>
 			<div class="ui-right ui-item" v-if="focusData.mapItem">
@@ -213,13 +215,21 @@ onBeforeUnmount(() => {
 				<div>
 					<ElButton type="danger" @click="handleDeleteMapItem(focusData.mapItem?.id || '')">删除当前MapItem</ElButton>
 				</div>
-				<property-form @submit="loadMapItems" v-if="isBelinked" :current-map-item="focusData.mapItem"
-					:street-list="mapInfo.streets" />
+				<property-form
+					@submit="loadMapItems"
+					v-if="isBelinked"
+					:current-map-item="focusData.mapItem"
+					:street-list="mapInfo.streets"
+				/>
 			</div>
 		</div>
 		<canvas id="map-editor-canvas"></canvas>
-		<ChanceCardSelector :is-visible="chanceCardSelectorVisible" @close="chanceCardSelectorVisible = false"
-			@confirm="handleChanCardSelect" :map-id="mapId" />
+		<ChanceCardSelector
+			:is-visible="chanceCardSelectorVisible"
+			@close="chanceCardSelectorVisible = false"
+			@confirm="handleChanCardSelect"
+			:map-id="mapId"
+		/>
 	</div>
 </template>
 
@@ -251,7 +261,7 @@ onBeforeUnmount(() => {
 			align-items: start;
 		}
 
-		.ui-item>* {
+		.ui-item > * {
 			border-radius: 6px;
 			box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
 			pointer-events: initial;
@@ -259,7 +269,7 @@ onBeforeUnmount(() => {
 			overflow: hidden;
 		}
 
-		.ui-right>* {
+		.ui-right > * {
 			float: right;
 		}
 	}

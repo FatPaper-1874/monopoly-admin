@@ -1,8 +1,14 @@
-import {_axios} from "@/utils/axios";
+import { _axios } from "@/utils/axios";
 
-
-export const createMapItem = async (_id: string, x: number, y: number, typeId: string, mapId: string) => {
-	return await _axios.post("/map-item/create", { _id, x, y, typeId, mapId });
+export const createMapItem = async (
+	_id: string,
+	x: number,
+	y: number,
+	rotation: 0 | 1 | 2 | 3,
+	typeId: string,
+	mapId: string
+) => {
+	return await _axios.post("/map-item/create", { _id, x, y, rotation, typeId, mapId });
 };
 
 export const deleteMapItem = async (id: string) => {

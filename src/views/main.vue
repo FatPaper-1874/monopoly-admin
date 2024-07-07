@@ -1,38 +1,37 @@
 <script setup lang="ts">
 import {menus} from "../router/menus";
 import {computed, onBeforeMount} from "vue";
-import router from "@/router/index";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {isAdmin} from "@/utils/api/user";
 import {ElMessage} from "element-plus";
 import {useRouter} from "vue-router";
 
+const router = useRouter();
 const currentRoutePath = computed(() => router.currentRoute.value.path);
 
 onBeforeMount(async () => {
   const token = localStorage.getItem("token");
-  const _router = useRouter();
   if (token) {
     const {isAdmin: _isAdmin} = await isAdmin();
     if (!_isAdmin) {
       ElMessage({message: "该账号不是管理员账号！请重新登录", type: 'error'});
-      _router.replace('/login');
+      router.replace('/login');
     }
   } else {
-    _router.replace('/login');
+    router.replace('/login');
   }
 })
 
 function handleLogout() {
   localStorage.removeItem("token");
   router.replace({name: "login"})
-};
+}
 </script>
 
 <template>
   <el-container class="main-page">
     <el-header class="top-bar" height="50px">
-      <h3 style="display: inline-block;">多人在线大富翁后台</h3>
+      <h3 style="display: inline-block;">FatPaper大富翁总控中心</h3>
       <el-button @click="handleLogout">登出</el-button>
     </el-header>
 

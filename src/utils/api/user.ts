@@ -19,8 +19,6 @@ export const getUserList = async (page: number, size: number) => {
 
 export const getLoginCode = async () => {
     const res = (await _axios.get("/user/get-login-code")) as any;
-    console.log("🚀 ~ file: user.ts:22 ~ getLoginCode ~ res:", res);
-
     return res as { img: { type: string; data: number[] }; uuid: string };
 };
 
@@ -31,7 +29,6 @@ export const getLoginCodeState = async (uuid: string) => {
 
 export const isAdmin = async () => {
     const res = (await _axios.get(`/user/is-admin`)) as any;
-    console.log("🚀 ~ file: user.ts:35 ~ isAdmin ~ res:", res)
     return res as { isAdmin: boolean };
 };
 

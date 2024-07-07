@@ -45,10 +45,10 @@ export const menus: menuItem[] = [
         icon: "credit-card",
     },
     {
-        path: "/event-itemtype",
-        menuName: "特殊ItemType管理",
-        name: "event-itemtype",
-        component: () => import('@/views/manage/event-itemtype-manage/event-itemtype-manage.vue'),
+        path: "/arrived-event",
+        menuName: "到达事件管理",
+        name: "arrived-event",
+        component: () => import('@/views/manage/arrived-event-manage/arrived-event-manage.vue'),
         icon: "wand-magic-sparkles",
     },
     {
@@ -71,7 +71,7 @@ export const staticRoute: staticRouteItem[] = [
         component: () => import('@/views/manage/chance-card-manage/components/chance-card-editor.vue')
     },
     {
-        path: "/event-itemtype-editor", name: "event-itemtype-editor",
-        component: () => import('@/views/manage/event-itemtype-manage/components/event-itemtype-editor.vue')
+        path: "/arrived-event-editor", name: "arrived-event-editor",
+        component: () => import('@/views/manage/arrived-event-manage/components/arrived-event-editor.vue')
     },
 ];

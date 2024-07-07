@@ -29,7 +29,7 @@ const handleUploadFailed = (res: any) => {
 	emit("error", res);
 };
 
-const uploadAction = computed(() => `${__MONOPOLYSERVER__}/upload/background`);
+const uploadAction = computed(() => `${__MONOPOLYSERVER__}/map/background`);
 </script>
 
 <template>

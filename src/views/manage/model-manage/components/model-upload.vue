@@ -62,7 +62,7 @@ const handleUploadFailed = (res: any) => {
   }
   emit("error");
 };
-const uploadAction = computed(() => `${__MONOPOLYSERVER__}/upload/model`);
+const uploadAction = computed(() => `${__MONOPOLYSERVER__}/model/create`);
 </script>
 
 <template>

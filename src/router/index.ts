@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from "vue-router";
+import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 import {menus, staticRoute} from "./menus";
 
 const menuRoutes = menus.map((menu) => {
@@ -7,11 +7,18 @@ const menuRoutes = menus.map((menu) => {
 });
 
 const routes = [
-    {path: "/", alias: "/main", name: "main", component: ()=>import('@/views/main.vue'), children: menuRoutes.concat(staticRoute)},
-    {path: "/login", name: "login", component: ()=>import('@/views/login/login.vue')},
+    {
+        path: "/",
+        alias: "/main",
+        name: "main",
+        component: () => import('@/views/main.vue'),
+        children: menuRoutes.concat(staticRoute)
+    },
+    {path: "/login", name: "login", component: () => import('@/views/login/login.vue')},
 ];
 
-const router = createRouter({history: createWebHistory(), routes});
+
+const router = createRouter({history: import.meta.env.PROD ? createWebHistory() : createWebHashHistory(), routes});
 
 router.beforeEach(async (to, form) => {
     if (!["/login"].includes(to.path) && (!localStorage.getItem("token"))) {

@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import {createApp} from "vue";
 import "@/assets/style.scss";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
@@ -8,13 +8,13 @@ import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import "@/utils/axios";
 
 /* import the fontawesome core */
-import { library } from "@fortawesome/fontawesome-svg-core";
+import {library} from "@fortawesome/fontawesome-svg-core";
 
 /* import font awesome icon component */
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 /* import specific icons */
-import { fas } from "@fortawesome/free-solid-svg-icons";
+import {fas} from "@fortawesome/free-solid-svg-icons";
 
 /* add icons to the library */
 library.add(fas);
@@ -22,5 +22,22 @@ library.add(fas);
 const app = createApp(App);
 app.use(ElementPlus).use(router).component("font-awesome-icon", FontAwesomeIcon).mount("#app");
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-	app.component(key, component);
+    app.component(key, component);
 }
+
+// 修复monaco-editor报错
+import * as monaco from 'monaco-editor';
+import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
+
+// @ts-ignore
+self.MonacoEnvironment = {
+    getWorker(_: any, label: string) {
+        if (label === 'typescript' || label === 'javascript') {
+            return new tsWorker();
+        }
+        return new editorWorker();
+    }
+};
+
+monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);

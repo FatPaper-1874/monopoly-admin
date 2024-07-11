@@ -13,6 +13,8 @@ const route = useRoute();
 const router = useRouter();
 const _arrivedEventId = route.query.id as string;
 
+const editorVisible = ref(false);
+
 const modelText = ref<string>(ModelText);
 const tempIconFile = ref<UploadRawFile | undefined>();
 const iconUploadRef = ref<UploadInstance>();
@@ -56,6 +58,12 @@ const handleCreateArrivedEvent = async (formEl: FormInstance | undefined) => {
 const loadArrivedEventInfo = async (id: string) => {
   const {name, describe, iconUrl, effectCode} = await getArrivedEventById(id);
   Object.assign(arrivedEventFrom, {name, describe, iconUrl: `http://${iconUrl}`, effectCode});
+  const oldModelText = modelText.value;
+  const oldModelTextArr = oldModelText.split('\n');
+  const firstTagIndex = oldModelTextArr.findIndex(i => i.includes("//CODING AREA"));
+  oldModelTextArr.splice(firstTagIndex + 1, 0, effectCode);
+  modelText.value = oldModelTextArr.join('\n');
+  editorVisible.value = true;
 };
 
 const uploadAction = computed(() =>
@@ -90,6 +98,8 @@ const setArrivedEventInfo = (arrivedEvent: ArrivedEvent) => {
 onBeforeMount(async () => {
   if (_arrivedEventId) {
     loadArrivedEventInfo(_arrivedEventId)
+  } else {
+    editorVisible.value = true;
   }
 });
 </script>
@@ -141,7 +151,7 @@ onBeforeMount(async () => {
 				</span>
       </div>
       <div class="editor-area">
-        <code-editor :model-text="modelText" v-model="arrivedEventFrom.effectCode"/>
+        <code-editor v-if="editorVisible" :model-text="modelText" v-model="arrivedEventFrom.effectCode"/>
       </div>
     </div>
   </div>

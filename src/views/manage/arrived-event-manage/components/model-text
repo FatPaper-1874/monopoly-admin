@@ -1,0 +1,7 @@
+let gameProcess: GameProcess
+
+function effectFunction(arrivedPlayer: Player) {
+    //CODING AREA
+
+    //CODING AREA
+}

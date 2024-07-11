@@ -9,7 +9,7 @@ export const createArrivedEvent = async (name: string, describe: string, effectC
     return await _axios.post("/arrived-event/create", formData)
 }
 
-export const updateArrivedEvent = async (id: string, name: string, describe: string, effectCode: string, iconFile?: File,) => {
+export const updateArrivedEvent = async (id: string, name: string, describe: string, effectCode: string, iconFile?: File) => {
     const formData = new FormData();
     formData.append("id", id);
     formData.append("name", name);

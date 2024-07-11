@@ -1,0 +1,7 @@
+let gameProcess: GameProcess
+
+function effectFunction(sourcePlayer: Player, target: Player | Property | Player[] | Property[]){
+    //CODING AREA
+
+    //CODING AREA
+}

@@ -5,17 +5,22 @@ import router from "@/router/index";
 import {createChanceCard, getChanceCardById, updateChanceCard} from "@/utils/api/chanceCard";
 import {randomColor} from "@/utils/color";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {FormInstance, FormRules} from "element-plus";
-import {onBeforeMount, onMounted, reactive, ref, toRaw} from "vue";
+import {ElMessage, FormInstance, FormRules, genFileId, UploadInstance, UploadProps, UploadRawFile} from "element-plus";
+import {computed, onBeforeMount, onMounted, reactive, ref, toRaw} from "vue";
 import {useRoute} from "vue-router";
 import CodeEditor from "@/components/code-editor/index.vue";
 import ModelText from "@/views/manage/chance-card-manage/components/model-text?raw";
+import {MONOPOLY_SERVER_PORT} from "../../../../../../global.config";
 
 const modelText = ref<string>(ModelText);
 
 const route = useRoute();
 const _chanceCardId = route.query.id as string;
 const _chanceCardTypes = Array.from(Object.values(ChanceCardType));
+const editorVisible = ref(false);
+
+const tempIconFile = ref<UploadRawFile | undefined>();
+const iconUploadRef = ref<UploadInstance>();
 
 const chanceCardForm = reactive({
   name: "",
@@ -52,11 +57,15 @@ const handleCreateOrUpdateChanceCard = async (formEl: FormInstance | undefined) 
           color: new_color,
           icon: new_icon,
           effectCode: new_effectCode,
-        } = (await updateChanceCard(_chanceCardId, name, describe, type, color, icon, effectCode)) as any;
+        } = (await updateChanceCard(_chanceCardId, name, describe, type, color, effectCode, tempIconFile.value)) as any;
         setChanceCardInfo(new_name, new_describe, new_type, new_color, new_icon, new_effectCode);
       } else {
-        await createChanceCard(name, describe, type, color, icon, effectCode);
-        router.replace({ path: "/chance-card" });
+        if (!tempIconFile.value) {
+          ElMessage({message: "读取icon文件失败", type: "error"});
+          return
+        }
+        await createChanceCard(name, describe, type, color, tempIconFile.value, effectCode);
+        router.replace({path: "/chance-card"});
       }
     } else {
       console.log("error submit!");
@@ -69,8 +78,14 @@ const loadChanceCardInfo = async () => {
   if (_chanceCardId) {
     const {name, describe, type, color, icon, effectCode} = (await getChanceCardById(_chanceCardId)) as any;
     setChanceCardInfo(name, describe, type, color, icon, effectCode);
+  } else {
+    editorVisible.value = true;
   }
 };
+
+const uploadAction = computed(() =>
+    `http://localhost:${MONOPOLY_SERVER_PORT}/chance_card/${_chanceCardId ? "update" : 'create'}`
+)
 
 const setChanceCardInfo = (
     name: string,
@@ -85,10 +100,27 @@ const setChanceCardInfo = (
   chanceCardForm.type = type;
   chanceCardForm.color = color;
   chanceCardForm.icon = icon;
-  const modelTextStrArr = ModelText.split("\n");
-  const insertIndex = modelTextStrArr.findIndex((s)=>s.includes("CODING AREA")) + 1;
-  modelTextStrArr.splice(insertIndex, 1, ...(effectCode.split("\n")))
-  modelText.value = modelTextStrArr.join("\n");
+  const oldModelText = modelText.value;
+  const oldModelTextArr = oldModelText.split('\n');
+  const firstTagIndex = oldModelTextArr.findIndex(i => i.includes("//CODING AREA"));
+  oldModelTextArr.splice(firstTagIndex + 1, 0, effectCode);
+  modelText.value = oldModelTextArr.join('\n');
+  editorVisible.value = true;
+}
+
+const handleIconUploadExceed: UploadProps['onExceed'] = (files) => {
+  if (!iconUploadRef.value) return;
+  iconUploadRef.value.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  iconUploadRef.value.handleStart(file)
+}
+
+const handleIconUploadChanged: UploadProps['onChange'] = (file, files) => {
+  if (file.raw) {
+    chanceCardForm.icon = URL.createObjectURL(file.raw);
+    tempIconFile.value = file.raw;
+  }
 }
 
 //代码编辑器相关
@@ -136,7 +168,13 @@ onBeforeMount(() => {
           </el-form-item>
 
           <el-form-item label="机会卡图标" prop="icon">
-            <el-input v-model="chanceCardForm.icon" placeholder=""></el-input>
+            <el-upload ref="iconUploadRef" accept=".png,.jpg" :action="uploadAction" :on-exceed="handleIconUploadExceed"
+                       :on-change="handleIconUploadChanged"
+                       :auto-upload="false" :limit="1">
+              <template #trigger>
+                <el-button type="primary">上传icon</el-button>
+              </template>
+            </el-upload>
           </el-form-item>
 
           <el-form-item label="机会卡颜色" prop="color">
@@ -162,7 +200,7 @@ onBeforeMount(() => {
 				</span>
       </div>
       <div class="editor-area">
-        <code-editor :model-text="modelText" v-model="chanceCardForm.effectCode"/>
+        <code-editor v-if="editorVisible" :model-text="modelText" v-model="chanceCardForm.effectCode"/>
       </div>
     </div>
   </div>

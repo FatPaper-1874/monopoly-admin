@@ -129,7 +129,8 @@ const loadMapInfo = async () => {
 };
 
 const loadMapItems = async () => {
-  mapInfo.mapItems = await getMapItemsListByMapId(mapId);
+  mapInfo.mapItems = (await getMapItemsListByMapId(mapId)) as MapItem[];
+  mapEditor && mapEditor.setMapItemsList(mapInfo.mapItems);
 };
 
 const loadProperties = async () => {

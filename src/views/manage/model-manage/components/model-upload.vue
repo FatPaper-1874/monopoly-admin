@@ -1,38 +1,59 @@
 <script setup lang="ts">
-import {FormInstance, FormRules, UploadInstance, ElMessage} from "element-plus";
-import {ref, reactive, toRaw, computed} from "vue";
-import {FATPAPER_HOST, MONOPOLY_SERVER_PORT} from "../../../../../../global.config";
+import {FormInstance, FormRules, UploadInstance, ElMessage, UploadRawFile, UploadProps, genFileId} from "element-plus";
+import {ref, reactive, toRaw, computed, watch} from "vue";
+import {Model} from "@/interfaces/interfaces"
 import {__MONOPOLYSERVER__} from "../../../../../global.config";
+import {createModel, updateModel} from "@/utils/api/model";
+import {temp} from "three/examples/jsm/nodes/core/VarNode";
 
-const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = defineProps<{ visible: boolean, model: Model | undefined }>();
 
 const uploadHeader = {Authorization: localStorage.getItem("token")};
 
-const emit = defineEmits(["open", "opened", "close", "closed", "success", "error"]);
+const emit = defineEmits(["open", "opened", "close", "closed", "success", "error", 'update:visible']);
 
-const uploadRef = ref<UploadInstance>();
+watch(() => props.visible, (newVisible: boolean) => {
+  emit("update:visible", newVisible);
+})
 const fromRef = ref<FormInstance>();
+const uploadRef = ref<UploadInstance>();
 
-const modelForm = reactive({
+const modelForm = reactive<{ id: string, name: string, modelFile: UploadRawFile | undefined }>({
+  id: "",
   name: "",
-  fileList: [],
+  modelFile: undefined
 });
 
-const rules = reactive<FormRules>({
+watch(() => props.model, (newModel) => {
+  modelForm.id = newModel?.id || "";
+  modelForm.name = newModel?.name || "";
+})
+
+const createRules = reactive<FormRules>({
   name: [{required: true, message: "请输入模型名字", trigger: "blur"}],
-  fileList: [{required: true, message: "请选择模型", trigger: "blur"}],
+  modelFile: [{required: true, message: "请选择模型", trigger: "blur"}],
+});
+
+const updateRules = reactive<FormRules>({
+  name: [{required: true, message: "请输入模型名字", trigger: "blur"}],
+  modelFile: [{required: false, message: "请选择模型", trigger: "blur"}],
 });
 
 const submitUpload = () => {
-  fromRef.value!.validate((valid) => {
+  fromRef.value!.validate(async (valid) => {
     if (!valid) return;
-    console.log("表单校验完成");
-    uploadRef.value!.submit();
+    try {
+      let res;
+      if (props.model) {
+        res = await updateModel(props.model.id, modelForm.name, modelForm.modelFile)
+      } else {
+        if (!modelForm.modelFile) return;
+        res = await createModel(modelForm.name, modelForm.modelFile)
+      }
+      handleUploadSuccess(res);
+    } catch (e: any) {
+      handleUploadFailed();
+    }
   });
 };
 
@@ -43,26 +64,28 @@ const handleClose = (done: any) => {
 
 const handleUploadSuccess = (res: any) => {
   fromRef.value?.resetFields();
-  if (res.status === 200) {
-    ElMessage({
-      type: "success",
-      message: res.msg,
-    });
-  }
   emit("success");
 };
 
-const handleUploadFailed = (res: any) => {
+const handleUploadFailed = () => {
   fromRef.value?.resetFields();
-  if (res.status === 500) {
-    ElMessage({
-      type: "error",
-      message: res.msg,
-    });
-  }
   emit("error");
 };
-const uploadAction = computed(() => `${__MONOPOLYSERVER__}/model/create`);
+
+const handleModelUploadExceed: UploadProps['onExceed'] = (files) => {
+  if (!uploadRef.value) return;
+  uploadRef.value.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  uploadRef.value.handleStart(file)
+}
+
+const handleModelUploadChanged: UploadProps['onChange'] = (file, files) => {
+  if (file.raw) {
+    // arrivedEventFrom.iconUrl = URL.createObjectURL(file.raw);
+    modelForm.modelFile = file.raw;
+  }
+}
 </script>
 
 <template>
@@ -74,25 +97,24 @@ const uploadAction = computed(() => `${__MONOPOLYSERVER__}/model/create`);
       width="30%"
       :before-close="handleClose"
   >
-    <el-form ref="fromRef" :rules="rules" label-width="80px" :model="modelForm">
+    <el-form ref="fromRef" :rules="model?updateRules:createRules" label-width="80px" :model="modelForm">
       <el-form-item label="模型名字" prop="name">
         <el-input v-model="modelForm.name"/>
       </el-form-item>
 
-      <el-form-item label="模型文件" prop="fileList">
+      <el-form-item label="模型文件" prop="modelFile">
         <el-upload
-            v-model:file-list="modelForm.fileList"
             style="width: 100%"
             name="model"
             accept=".glb"
-            :auto-upload="false"
             :headers="uploadHeader"
             :data="modelForm"
             ref="uploadRef"
             class="upload-demo"
-            :action="uploadAction"
-            @success="handleUploadSuccess"
-            @error="handleUploadFailed"
+            :on-exceed="handleModelUploadExceed"
+            :on-change="handleModelUploadChanged"
+            :auto-upload="false"
+            :limit="1"
         >
           <template #trigger>
             <el-button type="primary">选择.glb模型文件</el-button>

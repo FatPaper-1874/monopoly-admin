@@ -1,11 +1,11 @@
-import {ThreeBase} from "@/utils/three/three-base";
+import {ThreeSceneBase} from "@/utils/three/ThreeSceneBase";
 import * as THREE from 'three'
 import {RoleModel} from "@/views/manage/role-manage/components/utils/RoleModel";
 
-export class RoleListCardPreviewer extends ThreeBase {
+export class RoleCardPreviewerRenderer extends ThreeSceneBase {
     private role: RoleModel | undefined;
 
-    constructor(canvas: HTMLCanvasElement,baseUrl: string, fileName: string) {
+    constructor(canvas: HTMLCanvasElement, baseUrl: string, fileName: string) {
         super(canvas)
         const light = new THREE.AmbientLight(0xffffff, 1);
         this.scene.add(light);
@@ -18,13 +18,21 @@ export class RoleListCardPreviewer extends ThreeBase {
 
     protected renderLoop() {
         this.role && this.role.update();
-        super.renderLoop();
+        super.render();
+        this.requestAnimationFrameId = requestAnimationFrame(this.renderLoop.bind(this));
     }
 
     public async loadRole(baseUrl: string, fileName: string) {
+        this.setLoadingMaskVisible(true);
         this.role = new RoleModel(1, `http://${baseUrl}/`, fileName);
         const model = await this.role.load();
         this.scene.add(model);
-        this.role.doAnimation('hi', true)
+        this.setLoadingMaskVisible(false);
+        await this.role.doAnimation('hi', false);
+        this.role.doAnimation('idle');
+    }
+
+    public destroy() {
+        super.destroy()
     }
 }

@@ -3,8 +3,8 @@ import { deleteMap } from "@/utils/api/map";
 import { GameMap } from "@/interfaces/interfaces";
 import { ElMessageBox } from "element-plus";
 import { onMounted, onUnmounted, toRaw } from "vue";
-import { MapPreviewer } from "@/utils/three/map-previewer";
-import { getItemTypesFromMapItems } from "@/utils/index";
+import { MapPreviewerRenderer } from "@/utils/three/MapPreviewerRenderer";
+import { getItemTypesFromMapItems } from "@/utils";
 
 const { map } = defineProps<{ map: GameMap }>();
 const emit = defineEmits(["delete", "edit"]);
@@ -35,18 +35,18 @@ const handleCommand = (command: string) => {
 	}
 };
 
-let mapPreviewer: MapPreviewer;
+let mapPreviewer: MapPreviewerRenderer;
 
 onMounted(async () => {
 	const threeCanvas = document.getElementById(map.id) as HTMLCanvasElement;
-	mapPreviewer = new MapPreviewer(threeCanvas);
+	mapPreviewer = new MapPreviewerRenderer(threeCanvas);
 	await mapPreviewer.loadModels(map.itemTypes);
 	await mapPreviewer.loadMapItems(map.mapItems);
 	mapPreviewer.lockCamera(true);
 });
 
 onUnmounted(() => {
-	mapPreviewer.distory();
+	mapPreviewer.destroy();
 });
 </script>
 

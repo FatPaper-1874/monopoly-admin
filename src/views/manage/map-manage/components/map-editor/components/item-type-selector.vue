@@ -7,6 +7,7 @@ import { ModelPreviewer } from "@/utils/three/model-previewer";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { ElButton, ElSelect, ElOption, ElOptionGroup, ElMessageBox } from "element-plus";
 import ItemTypeCreator from "./item-type-creator.vue";
+import {deleteItemType} from "@/utils/api/itemType";
 
 const props = withDefaults(defineProps<{ visible: boolean; currentType: ItemType | undefined }>(), { visible: false });
 const emits = defineEmits(["update:currentType", "created"]);

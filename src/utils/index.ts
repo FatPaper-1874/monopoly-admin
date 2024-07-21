@@ -32,3 +32,17 @@ export function debounce(fn: Function, delay_ms: number) {
         }, delay_ms);
     };
 }
+
+export function createLoginIframeOnBody(url: string): Promise<string> {
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.id = "login-iframe";
+    document.body.appendChild(iframe);
+    return new Promise((resolve, reject) => {
+        window.addEventListener('message', e => {
+            const token = e.data;
+            document.body.removeChild(iframe);
+            resolve(token);
+        })
+    })
+}

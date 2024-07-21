@@ -16,6 +16,8 @@ const currentPage = ref(1);
 const totalPage = ref(0);
 const size = ref(8);
 
+const currentModel = ref<Model>();
+
 const handleCurrentChange = () => {
   loadModelList();
 };
@@ -23,6 +25,7 @@ const handleCurrentChange = () => {
 const loadModelList = async () => {
   isLoading.value = true;
   const {total, modelList, current} = await getModelList(currentPage.value, size.value);
+  console.log(modelList)
   _modelList.value = modelList;
   totalPage.value = total;
   currentPage.value = current;
@@ -35,8 +38,18 @@ const handleUploadSuccess = () => {
   loadModelList();
 };
 
+const handleModelCreate = ()=>{
+  currentModel.value = undefined;
+  createModelVisible.value = true
+}
+
 const handleModelDelete = () => {
   loadModelList();
+};
+
+const handleModelEdit = (model:Model) => {
+  currentModel.value = model;
+  createModelVisible.value = true
 };
 
 onMounted(async () => {
@@ -49,12 +62,12 @@ onMounted(async () => {
     <el-row class="top-bar">
       <el-col :span="20" class="title"><h4>模型管理</h4></el-col>
       <el-col :span="4" class="button-container">
-        <el-button class="button-create-model" type="primary" @click="createModelVisible = true">添加模型</el-button>
+        <el-button class="button-create-model" type="primary" @click="handleModelCreate">添加模型</el-button>
       </el-col>
     </el-row>
 
     <div v-loading="isLoading" element-loading-text="Loading..." class="model-list-container">
-      <model-list-card @delete="handleModelDelete" v-for="model in _modelList" :key="model.id" :model="model"/>
+      <model-list-card @edit="handleModelEdit(model)" @delete="handleModelDelete" v-for="model in _modelList" :key="model.id" :model="model"/>
     </div>
 
     <el-pagination
@@ -67,7 +80,8 @@ onMounted(async () => {
     />
   </div>
   <model-upload
-      v-model="createModelVisible"
+      :model="currentModel"
+      v-model:visible="createModelVisible"
       @close="createModelVisible = false"
       @success="handleUploadSuccess"
   ></model-upload>

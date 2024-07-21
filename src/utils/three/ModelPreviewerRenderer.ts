@@ -1,26 +1,19 @@
-import { __MONOPOLYSERVER__ } from "../../../global.config";
 import { AmbientLight, Box3, Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from "three";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import {ThreeSceneBase} from "@/utils/three/ThreeSceneBase";
 
-export class ModelPreviewer {
-	private canvas: HTMLCanvasElement;
-	private renderer: WebGLRenderer;
-	private scene: Scene;
-	private camera: PerspectiveCamera;
+export class ModelPreviewerRenderer extends ThreeSceneBase {
 
 	constructor(canvas: HTMLCanvasElement) {
-		this.canvas = canvas;
-		this.renderer = new WebGLRenderer({ canvas, antialias: true });
-		this.scene = new Scene();
+		super(canvas);
 		this.scene.background = new Color(0xeeeeee);
-		this.camera = new PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-		this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-
-		this.renderer.render(this.scene, this.camera);
+		this.camera.fov = 45;
+		this.render();
 	}
 
 	public async loadModel(modelFileUrl: string, rotatable: boolean) {
+		this.setLoadingMaskVisible(true);
 		this.scene.clear();
 		if (!modelFileUrl) {
 			this.renderer.render(this.scene, this.camera);
@@ -42,10 +35,11 @@ export class ModelPreviewer {
 		this.camera.position.z += distance;
 		this.camera.lookAt(center);
 		
-		const light = new AmbientLight(0xffffff, 5); // soft white light
+		const light = new AmbientLight(0xffffff, 4.5); // soft white light
 		this.scene.add(light);
 
 		this.renderer.render(this.scene, this.camera);
+		this.setLoadingMaskVisible(false);
 
 		if (rotatable) {
 			const _this = this;
@@ -58,11 +52,11 @@ export class ModelPreviewer {
 				_this.renderer.render(_this.scene, _this.camera);
 			}
 
-			this.canvas.addEventListener("mouseenter", () => {
+			this.canvasEl.addEventListener("mouseenter", () => {
 				rotate();
 			});
 
-			this.canvas.addEventListener("mouseleave", () => {
+			this.canvasEl.addEventListener("mouseleave", () => {
 				cancelAnimationFrame(requestAnimationFrameId);
 			});
 		}
@@ -73,10 +67,7 @@ export class ModelPreviewer {
 		this.renderer.render(this.scene, this.camera);
 	}
 
-	public distory() {
-		this.scene.clear();
-		this.renderer.clear();
-		this.renderer.dispose();
-		this.renderer.forceContextLoss();
+	public destroy() {
+		super.destroy()
 	}
 }

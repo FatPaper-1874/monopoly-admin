@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import {ElMessageBox} from "element-plus";
 import {Role} from "@/interfaces/interfaces";
-import {computed, onMounted, ref} from "vue";
-import {RoleListCardPreviewer} from "./utils/RoleListCardPreviewer";
+import {computed, onMounted, onUnmounted, ref} from "vue";
+import {RoleCardPreviewerRenderer} from "./utils/RoleCardPreviewerRenderer";
 
 const {role} = defineProps<{ role: Role }>();
 const emit = defineEmits(["delete", "edit"]);
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
+let roleCardPreviewerRenderer: RoleCardPreviewerRenderer | undefined = undefined;
 
 onMounted(() => {
   const canvasEl = canvasRef.value;
   if (!canvasEl) return;
-  const roleCardPreviewer = new RoleListCardPreviewer(canvasEl, role.baseUrl, role.fileName)
+  roleCardPreviewerRenderer = new RoleCardPreviewerRenderer(canvasEl, role.baseUrl, role.fileName);
+})
+
+onUnmounted(() => {
+  roleCardPreviewerRenderer && roleCardPreviewerRenderer.destroy();
 })
 
 const handleEdit = () => {

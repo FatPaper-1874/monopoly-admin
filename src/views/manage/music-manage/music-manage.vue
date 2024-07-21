@@ -112,7 +112,10 @@ onMounted(async () => {
 
 .music-list-container {
   flex: 1;
-  padding: 20px 0;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 10px;
   box-sizing: border-box;
+  box-shadow: var(--el-box-shadow-light);
 }
 </style>

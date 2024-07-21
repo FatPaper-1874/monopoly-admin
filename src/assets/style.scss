@@ -23,6 +23,59 @@ html {
   border: 0;
 }
 
+*[loading] {
+  position: relative;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, .2);
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    display: block;
+    left: calc(50% - 1rem);
+    top: calc(50% - 1rem);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 3px solid white;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    z-index: 2;
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
+}
+
+#login-iframe {
+  position: fixed;
+  width: 80vw;
+  height: 90vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: solid .5rem rgba(255, 255, 255, 0.5);
+  border-radius: 3rem;
+  box-shadow: var(--box-shadow);
+}
+
 :root {
   --color-primary: #337ecc;
   --color-primary-110: #2583e7;
@@ -42,7 +95,7 @@ html {
   --color-border-error: #fcd3d3;
   --color-border-message: #a8d4ff;
 
-  
+
   --color-text-primary: #0049e7;
   --color-text-second: #303030;
   --color-text-white: #ffffff;
@@ -91,6 +144,6 @@ html {
   justify-content: center;
 }
 
-.el-dialog{
-	border-radius: 10px !important;
+.el-dialog {
+  border-radius: 10px !important;
 }

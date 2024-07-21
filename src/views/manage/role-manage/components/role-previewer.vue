@@ -1,23 +1,24 @@
 <script setup lang="ts">
 import {nextTick, onMounted, watch, ref, onUpdated, onUnmounted, onBeforeMount, onBeforeUnmount} from "vue";
 import {__MONOPOLYSERVER__} from "../../../../../global.config";
-import {RolePreviewer} from "@/views/manage/role-manage/components/utils/RolePreviewer";
+import {RolePreviewerRenderer} from "@/views/manage/role-manage/components/utils/RolePreviewerRenderer";
 import {RoleModel} from "@/views/manage/role-manage/components/utils/RoleModel";
 
 const props = defineProps<{ baseUrl: string, fileName: string }>()
 
-let rolePreviewer: RolePreviewer | undefined;
+let rolePreviewer: RolePreviewerRenderer | undefined;
 let role: RoleModel | undefined;
 
 onMounted(() => {
   nextTick(() => {
     const canvasEl = document.getElementById("role-previewer__canvas") as HTMLCanvasElement;
-    rolePreviewer = new RolePreviewer(canvasEl);
-    loadModel()
+    rolePreviewer = new RolePreviewerRenderer(canvasEl);
+    // loadModel()
   })
 })
 
 onUnmounted(()=>{
+  rolePreviewer && rolePreviewer.destroy()
 })
 
 watch(() => props.fileName, (newFileName) => {

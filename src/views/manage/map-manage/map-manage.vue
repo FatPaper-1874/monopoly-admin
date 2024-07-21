@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from "vue";
 import { createMap, getMapsList } from "@/utils/api/map";
-import router from "@/router/index";
 import { GameMap } from "@/interfaces/interfaces";
-import MapListCard from "@/components/sample/map-list-card.vue";
+import MapListCard from "@/views/manage/map-manage/components/map-list-card.vue";
 import { FormInstance, FormRules } from "element-plus";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 const createMapDialogVisible = ref(false);
 

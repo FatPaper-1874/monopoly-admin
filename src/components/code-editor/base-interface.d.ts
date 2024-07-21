@@ -25,7 +25,7 @@ interface GameProcess {
     chanceCardsList: ChanceCardFromDB[];
     mapIndexList: string[];
     playersList: Player[];
-    itemTypesLsit: ItemType[];
+    itemTypesList: ItemType[];
     streetsList: Street[];
     animationStepDuration_ms: number;
 
@@ -36,6 +36,13 @@ interface GameProcess {
     timeoutList: any[];
     intervalTimerList: any[];
 
+    useChanceCardListener(sourcePlayer: Player): Promise<void>;
+    waitRollDice(player: Player): Promise<void>;
+    handleArriveEvent(arrivedPlayer: Player): Promise<void>;
+    getRandomChanceCard(num: number): ChanceCard[];
+    gameInfoBroadcast(): void;
+    gameBroadcast(msg: SocketMessage): void;
+    getPlayerById(id: string): Player | undefined;
 }
 
 interface GameSetting {

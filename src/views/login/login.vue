@@ -3,28 +3,16 @@ import {ref, onBeforeMount, onBeforeUnmount, reactive, onMounted} from "vue";
 import router from "@/router";
 import Background from "@/views/background/background.vue";
 import {__LOGINPAGEURL__} from "../../../global.config";
+import {createLoginIframeOnBody} from "@/utils";
 
 onMounted(async () => {
-  const _URLSearchParams = new URLSearchParams(location.search);
-  const tokenFromURL = _URLSearchParams.get("token") || "";
   const tokenFromLocal = localStorage.getItem("token") || "";
-  if (!tokenFromURL && !tokenFromLocal) {
-
-    toLogin();
-  } else {
-    let token = tokenFromLocal;
-    if (tokenFromURL) {
-      token = tokenFromURL;
-    }
+  if (!tokenFromLocal) {
+    const token = await createLoginIframeOnBody(__LOGINPAGEURL__);
     localStorage.setItem("token", token);
-    location.search = "";
-    toMain();
   }
+  toMain()
 });
-
-function toLogin() {
-  location.assign(__LOGINPAGEURL__);
-}
 
 function toMain() {
   router.push({name: "main"});

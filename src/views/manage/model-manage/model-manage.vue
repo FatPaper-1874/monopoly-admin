@@ -25,7 +25,6 @@ const handleCurrentChange = () => {
 const loadModelList = async () => {
   isLoading.value = true;
   const {total, modelList, current} = await getModelList(currentPage.value, size.value);
-  console.log(modelList)
   _modelList.value = modelList;
   totalPage.value = total;
   currentPage.value = current;

@@ -68,5 +68,10 @@ export class ThreeSceneBase {
         this.scene.clear();
         this.renderer.dispose();
         this.renderer.forceContextLoss();
+        let gl = this.renderer.domElement.getContext("webgl");
+        if (gl) {
+            const e = gl.getExtension("WEBGL_lose_context")
+            e && e.loseContext();
+        }
     }
 }

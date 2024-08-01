@@ -8,7 +8,7 @@ import {Model} from "@/interfaces/interfaces";
 const props = defineProps<{ model: Model }>();
 const emit = defineEmits(["delete", "edit"]);
 
-let modelPreview: ModelPreviewerRenderer;
+let modelPreview: ModelPreviewerRenderer | null;
 
 onMounted(async () => {
   const canvas = document.getElementById(props.model.id) as HTMLCanvasElement;
@@ -16,12 +16,15 @@ onMounted(async () => {
   await modelPreview.loadModel(props.model.fileUrl, true);
 });
 
-watch(() => props.model, (newModel) => {
+watch(() => props.model, (newModel, oldModel) => {
+  if (newModel.fileUrl === oldModel.fileUrl || !modelPreview) return
   modelPreview.loadModel(newModel.fileUrl, true);
 }, {deep: true})
 
 onUnmounted(() => {
+  if(!modelPreview) return
   modelPreview.destroy();
+  modelPreview = null;
 });
 
 const handleEdit = () => {

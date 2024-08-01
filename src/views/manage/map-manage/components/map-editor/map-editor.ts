@@ -12,6 +12,7 @@ import {MeshLineGeometry, MeshLineMaterial} from "meshline";
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass";
 import {GammaCorrectionShader} from "three/examples/jsm/shaders/GammaCorrectionShader";
+import {getDracoLoader} from "@/utils/three/draco";
 
 const BLOCK_HEIGHT = 0.09;
 
@@ -540,9 +541,7 @@ export class MapEditor {
 
         const modelsUrlList = Array.from(modelsUrlSet);
         const gltfLoader = new GLTFLoader();
-        const draco = new DRACOLoader();
-        draco.setDecoderPath("./draco/");
-        gltfLoader.setDRACOLoader(draco);
+        gltfLoader.setDRACOLoader(getDracoLoader());
         modelsUrlList.forEach((item) => {
             const promise = new Promise<{ id: string; glft: GLTF }>((resolve, reject) => {
                 gltfLoader.load(

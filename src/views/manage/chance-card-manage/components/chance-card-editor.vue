@@ -3,7 +3,7 @@ import ChanceCard from "@/components/sample/chance-card.vue";
 import {ChanceCardType} from "@/enums/bace";
 import router from "@/router/index";
 import {createChanceCard, getChanceCardById, updateChanceCard} from "@/utils/api/chanceCard";
-import {randomColor} from "@/utils/color";
+import {randomRGBColor} from "@/utils/color";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {ElMessage, FormInstance, FormRules, genFileId, UploadInstance, UploadProps, UploadRawFile} from "element-plus";
 import {computed, onBeforeMount, onMounted, reactive, ref, toRaw} from "vue";
@@ -27,7 +27,7 @@ const chanceCardForm = reactive({
   describe: "",
   type: "",
   icon: "",
-  color: randomColor(),
+  color: randomRGBColor(),
   effectCode: "",
 });
 const chanceCardFormRef = ref<FormInstance>();

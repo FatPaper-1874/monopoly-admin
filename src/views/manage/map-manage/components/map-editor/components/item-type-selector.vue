@@ -15,22 +15,11 @@ const emits = defineEmits(["update:currentType", "created"]);
 const mapId = useRoute().query.mapId as string;
 const currentType = ref<ItemType | undefined>(props.currentType);
 const _itemTypeList = ref<Array<ItemType>>([]);
-const itemTypeListOptions = computed(() => {
-  const newOptions = [
-    {
-      label: "特殊ItemType",
-      options: _itemTypeList.value.filter((i) => i.hasEvent),
-    },
-    {
-      label: "本地图ItemType",
-      options: _itemTypeList.value.filter((i) => !i.hasEvent),
-    },
-  ];
-  return newOptions;
-});
+
 let modelPreviewer: ModelPreviewerRenderer | undefined;
 
 function handleTypeSelect(newType: ItemType) {
+  console.log(newType)
   if (modelPreviewer) {
     if (newType) {
       modelPreviewer.loadModel(newType.model.fileUrl, true);
@@ -73,7 +62,6 @@ watch(
       nextTick(() => {
         if (newVisible) {
           const canvasEl = document.getElementById("model-previewer__canvas") as HTMLCanvasElement;
-
           modelPreviewer = new ModelPreviewerRenderer(canvasEl);
           if (currentType.value) {
             modelPreviewer.loadModel(currentType.value.model.fileUrl, true);
@@ -95,16 +83,14 @@ const createFormVisible = ref(false);
       <div class="form">
         <el-select value-key="color" @change="handleTypeSelect" clearable v-model="currentType"
                    placeholder="选择类型进入添加模式">
-          <el-option-group v-for="group in itemTypeListOptions" :key="group.label" :label="group.label">
-            <el-option v-for="(item, index) in group.options" :key="item.color" :value="item" :label="item.name">
-              <div class="options-container">
-                <span :style="{ color: item.color }">{{ item.name }}</span>
-                <el-button v-if="!item.hasEvent" @click="handelDeleteItemType(item.id)" type="danger" text size="small"
-                           class="remove-type__button">删除
-                </el-button>
-              </div>
-            </el-option>
-          </el-option-group>
+          <el-option v-for="(item, index) in _itemTypeList" :key="item.color" :value="item" :label="item.name">
+            <div class="options-container">
+              <span :style="{ color: item.color }">{{ item.name }}</span>
+              <el-button v-if="!item.hasEvent" @click="handelDeleteItemType(item.id)" type="danger" text size="small"
+                         class="remove-type__button">删除
+              </el-button>
+            </div>
+          </el-option>
         </el-select>
         <el-button @click="createFormVisible = true" class="add-type__button" type="primary">
           <FontAwesomeIcon icon="plus"/>
@@ -123,6 +109,7 @@ const createFormVisible = ref(false);
   flex-direction: column;
   padding: 10px;
   border-radius: 10px;
+  background-color: #fff;
 
   & > .form {
     display: flex;
@@ -133,10 +120,11 @@ const createFormVisible = ref(false);
     }
   }
 
-  & > #model-previewer__canvas {
+  #model-previewer__canvas {
     margin-top: 10px;
     border-radius: 10px;
     flex: 1;
+    width: 100%;
   }
 }
 

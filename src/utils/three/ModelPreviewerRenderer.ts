@@ -1,7 +1,7 @@
 import { AmbientLight, Box3, Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from "three";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import {ThreeSceneBase} from "@/utils/three/ThreeSceneBase";
+import {getDracoLoader} from "@/utils/three/draco";
 
 export class ModelPreviewerRenderer extends ThreeSceneBase {
 
@@ -20,9 +20,7 @@ export class ModelPreviewerRenderer extends ThreeSceneBase {
 			return;
 		}
 		const loader = new GLTFLoader();
-		const draco = new DRACOLoader();
-		draco.setDecoderPath('./draco/');
-		loader.setDRACOLoader(draco);
+		loader.setDRACOLoader(getDracoLoader());
 		const gltf = await loader.loadAsync(`http://${modelFileUrl}`);
 		const model = gltf.scene;
 		this.scene.add(model);

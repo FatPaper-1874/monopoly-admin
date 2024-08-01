@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import {ArrivedEvent} from "@/interfaces/interfaces";
-import {ModelPreviewer} from "@/utils/three/model-previewer";
 import {ElMessageBox} from "element-plus";
-import {computed, onMounted, onUnmounted} from "vue";
+import {computed} from "vue";
 import {deleteArrivedEvent} from "@/utils/api/arrivedEvent";
 
 const props = defineProps<{ arrivedEvent: ArrivedEvent }>();
 const emit = defineEmits(["delete", "edit"]);
-
-onMounted(async () => {
-  const canvas = document.getElementById(props.arrivedEvent.id) as HTMLCanvasElement;
-});
 
 const handleEdit = () => {
   emit("edit", props.arrivedEvent.id);

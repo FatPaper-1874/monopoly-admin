@@ -101,8 +101,9 @@ interface Player {
     //游戏相关
     setStop: (stop: number) => void;
     getStop: () => number;
-    setPositionIndex: (newIndex: number) => void;
     getPositionIndex: () => number;
+    walk: (step: number) => void;
+    tp: (positionIndex: number) => void;
 }
 
 interface ChanceCard {

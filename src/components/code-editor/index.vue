@@ -13,7 +13,6 @@ onMounted(() => {
   editor = monaco.editor.create(container, {value: props.modelText, language: "typescript", automaticLayout: true})
   editor.onDidChangeModelContent((e) => {
     if (!editor) return
-    console.log(editor.getValue())
     const content = editor.getValue();
     const match = content.match(/\/\/CODING AREA\s*([\s\S]*?)\s*\/\/CODING AREA/);
     if (!match) {

@@ -387,9 +387,9 @@ export class MapEditor {
             if (itemToDelete) this.scene.remove(itemToDelete);
             this.mapItemsInScene.delete(mapItem.id);
         });
-        this.update();
         this.updateLinkLines(newMapItemsList);
         this.updateArrivedEventIcon(newMapItemsList);
+        this.update();
     }
 
     public async setItemTypesList(newItemTypesList: ItemType[]) {
@@ -420,6 +420,7 @@ export class MapEditor {
     }
 
     private updateLinkLines(mapItemsList: MapItem[]) {
+        console.time('updateLinkLines')
         this.linkLinesContainer.clear();
         this.linkItemOutlinePass.selectedObjects = [];
         mapItemsList.forEach((mapItem) => {
@@ -449,12 +450,13 @@ export class MapEditor {
             }
         });
         this.linkItemOutlinePass.selectedObjects = this.linkLinesContainer.children;
-        this.update();
+        console.timeEnd('updateLinkLines')
     }
 
     private updateArrivedEventIcon(mapItemsList: MapItem[]) {
         this.arrivedEventiconContainer.clear();
         const textureLoader = new THREE.TextureLoader();
+        const _this = this;
         for (const mapItem of mapItemsList) {
             if (!mapItem.arrivedEvent) continue;
             const arrivedEvent = mapItem.arrivedEvent;
@@ -467,26 +469,33 @@ export class MapEditor {
                     transparent: true
                 });
                 const iconPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-                iconPlane.rotateX(Math.PI / 2)
-                if (this.mapIndex.length > 0) {
-                    const mapItemsInMapIndex = mapItemsList.filter((i) =>
-                        this.mapIndex.includes(i.id)
-                    );
-                    //根据路径优化图标方向
-                    const currentIndex = this.mapIndex.findIndex((item) => item === mapItem.id);
-                    const preMapItem = mapItemsInMapIndex[(currentIndex - 1) < 0 ? (currentIndex - 1 + mapItemsInMapIndex.length) : (currentIndex - 1)]
-                    const nextMapItem = mapItemsInMapIndex[(currentIndex + 1) % mapItemsInMapIndex.length];
-                    // 计算两个点之间的向量
-                    const direction = new THREE.Vector3();
-                    direction.subVectors(new THREE.Vector3(preMapItem.x, 0, preMapItem.y), new THREE.Vector3(nextMapItem.x, 0, nextMapItem.y)).normalize();
-                    // 设定一个法向量，图片朝上，y=1
-                    const normal = new THREE.Vector3(0, 1, 0);
-                    // 计算旋转四元数，使得法向量旋转到direction
-                    const quaternion = new THREE.Quaternion();
-                    quaternion.setFromUnitVectors(normal, direction);
-                    //应用
-                    iconPlane.quaternion.copy(quaternion);
-                }
+                iconPlane.rotateX(-Math.PI / 2)
+                // if (this.mapIndex.length > 0) {
+                //     const mapItemsInMapIndex = mapItemsList.filter((i) =>
+                //         this.mapIndex.includes(i.id)
+                //     );
+                //     //根据路径优化图标方向
+                //     const currentIndex = this.mapIndex.findIndex((item) => item === mapItem.id);
+                //     const preMapItem = mapItemsInMapIndex[(currentIndex - 1) < 0 ? (currentIndex - 1 + mapItemsInMapIndex.length) : (currentIndex - 1)];
+                //     const nextMapItem = mapItemsInMapIndex[(currentIndex + 1) % mapItemsInMapIndex.length];
+                //     const preMapItemModel = _this.mapItemsInScene.get(preMapItem.id);
+                //     const nextMapItemModel = _this.mapItemsInScene.get(nextMapItem.id);
+                //     if (preMapItemModel && nextMapItemModel) {
+                //         // 计算两个点之间的向量
+                //         const direction = new THREE.Vector3();
+                //         const {x: px, z: pz} = preMapItemModel.position;
+                //         const {x: nx, z: nz} = nextMapItemModel.position;
+                //         direction.subVectors(new THREE.Vector3(px, 0, pz), new THREE.Vector3(nx, 0, nz)).normalize();
+                //         console.log(direction)
+                //         // 设定一个法向量，图片朝上，y=1
+                //         const normal = new THREE.Vector3(0, 1, 0);
+                //         // 计算旋转四元数，使得法向量旋转到direction
+                //         const quaternion = new THREE.Quaternion();
+                //         quaternion.setFromUnitVectors(normal, direction);
+                //         //应用
+                //         iconPlane.quaternion.copy(quaternion);
+                //     }
+                // }
                 this.arrivedEventiconContainer.add(iconPlane)
                 this.setItemPositionOnMap(iconPlane, mapItem.x, mapItem.y, 0, BLOCK_HEIGHT + 0.05)
             });
@@ -561,7 +570,9 @@ export class MapEditor {
     }
 
     private update() {
+        console.time('render')
         this.composer.render();
+        console.timeEnd('render')
     }
 
     private diff<T extends Record<string, any>>(newArr: Array<T>, oldArr: Array<T>, key: string) {

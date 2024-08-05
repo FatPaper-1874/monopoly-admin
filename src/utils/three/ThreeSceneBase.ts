@@ -65,6 +65,14 @@ export class ThreeSceneBase {
     protected destroy() {
         this.resizeObserver && this.resizeObserver.disconnect();
         cancelAnimationFrame(this.requestAnimationFrameId);
+        this.scene.traverse(object => {
+            //@ts-ignore
+            object.geometry && object.geometry.dispose();
+            //@ts-ignore
+            object.texture && object.texture.dispose();
+            //@ts-ignore
+            object.material && object.material.dispose();
+        })
         this.scene.clear();
         this.renderer.dispose();
         this.renderer.forceContextLoss();

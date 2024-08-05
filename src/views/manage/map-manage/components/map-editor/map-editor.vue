@@ -182,8 +182,6 @@ onMounted(async () => {
 
   mapEditor.onItemClick((x, y, id) => {
     const focusItem = toRaw(mapInfo.mapItems.find((item) => item.id == id));
-    console.log(focusItem);
-
     if (focusItem) focusData.mapItem = focusItem;
   });
 
@@ -221,8 +219,9 @@ onBeforeUnmount(() => {
         <street-creator/>
       </div>
       <div class="ui-right ui-item" v-if="focusData.mapItem">
-        <arrived-event-selector @bind-change="handleArrivedEventBindChange" :current-map-item-id="focusData.mapItem.id"
-                                :current-arrived-event="focusData.mapItem.arrivedEvent"/>
+        <arrived-event-selector
+            v-if="!isBelinked" @bind-change="handleArrivedEventBindChange" :current-map-item-id="focusData.mapItem.id"
+            :current-arrived-event="focusData.mapItem.arrivedEvent"/>
         <mapitem-info @linked="loadMapItems" :current-map-item="focusData.mapItem" :be-linked="isBelinked"/>
         <div>
           <ElButton type="danger" @click="handleDeleteMapItem(focusData.mapItem?.id || '')">删除当前MapItem</ElButton>

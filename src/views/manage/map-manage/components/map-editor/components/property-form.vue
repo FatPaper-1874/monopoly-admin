@@ -157,7 +157,7 @@ const handleCreateOrUpdateProperty = async (formEl: FormInstance | undefined) =>
 
 <style lang="scss" scoped>
 .property-form {
-	padding: 10px;
+	padding: 15px;
   background-color: #fff;
 }
 </style>

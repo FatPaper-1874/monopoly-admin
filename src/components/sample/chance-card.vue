@@ -41,10 +41,10 @@ const iconUrl = computed(() => {
   overflow: hidden;
 
   & > .icon {
-    margin-bottom: 0.8em;
+    margin-bottom: 0.6em;
 
     & > img {
-      $img-size: 3.6em;
+      $img-size: 4.4em;
       width: $img-size;
       height: $img-size;
     }

@@ -46,7 +46,6 @@ const rules = reactive<FormRules>({
 });
 
 function filesRule(rule: any, value: any, callback: any) {
-  console.log(value)
   if (isUpdateMode) {
     callback()
   } else {
@@ -58,7 +57,7 @@ function filesRule(rule: any, value: any, callback: any) {
   }
 }
 
-const handleFormSubmit = () => {
+function handleFormSubmit(){
   formRef.value!.validate(async (valid) => {
     if (!valid) return;
     const formData = new FormData();
@@ -79,17 +78,17 @@ const handleFormSubmit = () => {
   });
 };
 
-const handleClose = (done: any) => {
+function handleClose(done: any){
   resetForm();
   emit("close");
 };
 
-const handleUploadSuccess = () => {
+function handleUploadSuccess(){
   resetForm();
   emit("success");
 };
 
-const handleUploadFailed = (res: any) => {
+function handleUploadFailed(res: any){
   resetForm();
   if (res.status === 500) {
     ElMessage({
@@ -100,7 +99,7 @@ const handleUploadFailed = (res: any) => {
   emit("error");
 };
 
-const handleFilesListChange = () => {
+function handleFilesListChange(){
 }
 
 const preViewRoleBaseUrl = ref("");

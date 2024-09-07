@@ -38,7 +38,7 @@ export function randomRGBColor() {
 
     let R, G, B;
 
-    const hue2rgb = (p: any, q: any, t: any) => {
+    function hue2rgb(p: any, q: any, t: any){
         if (t < 0) t += 1;
         if (t > 1) t -= 1;
         if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -70,7 +70,7 @@ export function randomHEXColor() {
 
     let R, G, B;
 
-    const hue2rgb = (p: any, q: any, t: any) => {
+    function hue2rgb(p: any, q: any, t: any){
         if (t < 0) t += 1;
         if (t > 1) t -= 1;
         if (t < 1 / 6) return p + (q - p) * 6 * t;

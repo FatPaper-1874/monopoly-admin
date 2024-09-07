@@ -28,7 +28,7 @@ const currentPage = ref(1);
 const totalPage = ref(0);
 const size = ref(6);
 
-const handleCurrentChange = () => {
+function handleCurrentChange(){
 	loadMapsList();
 };
 
@@ -41,7 +41,7 @@ const loadMapsList = async () => {
 	isLoading.value = false;
 };
 
-const handleCreateMap = () => {
+function handleCreateMap(){
 	fromRef.value!.validate(async (valid) => {
 		if (!valid) return;
 		const { id } = (await createMap(newMapForm.name)) as any;
@@ -49,11 +49,11 @@ const handleCreateMap = () => {
 	});
 };
 
-const handleMapEdit = (id: string) => {
+function handleMapEdit(id: string){
 	router.push({ path: "/map-editor", query: { mapId: id } });
 };
 
-const handleMapDelete = () => {
+function handleMapDelete(){
 	loadMapsList();
 };
 

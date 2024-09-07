@@ -7,11 +7,11 @@ import {deleteArrivedEvent} from "@/utils/api/arrivedEvent";
 const props = defineProps<{ arrivedEvent: ArrivedEvent }>();
 const emit = defineEmits(["delete", "edit"]);
 
-const handleEdit = () => {
+function handleEdit(){
   emit("edit", props.arrivedEvent.id);
 };
 
-const handleDelete = () => {
+function handleDelete(){
   ElMessageBox.alert("删除这个到达事件会导致绑定这个事件的MapItem一并失去该功能,你确定要删除吗", "警告", {
     confirmButtonText: "确定删除",
     cancelButtonText: "取消",
@@ -22,7 +22,7 @@ const handleDelete = () => {
   });
 };
 
-const handleCommand = (command: string) => {
+function handleCommand(command: string){
   switch (command) {
     case "edit":
       handleEdit();

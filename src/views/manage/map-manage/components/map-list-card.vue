@@ -9,11 +9,11 @@ import { getItemTypesFromMapItems } from "@/utils";
 const { map } = defineProps<{ map: GameMap }>();
 const emit = defineEmits(["delete", "edit"]);
 
-const handleEdit = () => {
+function handleEdit(){
 	emit("edit", map.id);
 };
 
-const handleDelete = () => {
+function handleDelete(){
 	ElMessageBox.alert("删除这个地图会导致这个地图的其他数据一并删除,如( Property, MapItem ),你确定要删除吗", "警告", {
 		confirmButtonText: "确定删除",
 		cancelButtonText: "取消",
@@ -24,7 +24,7 @@ const handleDelete = () => {
 	});
 };
 
-const handleCommand = (command: string) => {
+function handleCommand(command: string){
 	switch (command) {
 		case "edit":
 			handleEdit();

@@ -85,7 +85,7 @@ const handleIconUploadExceed: UploadProps['onExceed'] = (files) => {
   iconUploadRef.value.handleStart(file)
 }
 
-const setArrivedEventInfo = (arrivedEvent: ArrivedEvent) => {
+function setArrivedEventInfo(arrivedEvent: ArrivedEvent){
   const {name, describe, effectCode, iconUrl} = arrivedEvent;
   Object.assign(arrivedEventFrom, {name, describe, iconUrl})
   const modelTextStrArr = ModelText.split("\n");

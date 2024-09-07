@@ -9,7 +9,7 @@ const uploadHeader = { Authorization: localStorage.getItem("token") };
 
 const emit = defineEmits<{ (e: "success", res: any): void; (e: "error", res: any): void }>();
 
-const handleUploadSuccess = (res: any) => {
+function handleUploadSuccess(res: any){
 	if (res.status === 200) {
 		ElMessage({
 			type: "success",
@@ -19,7 +19,7 @@ const handleUploadSuccess = (res: any) => {
 	emit("success", res);
 };
 
-const handleUploadFailed = (res: any) => {
+function handleUploadFailed(res: any){
 	if (res.status === 500) {
 		ElMessage({
 			type: "error",

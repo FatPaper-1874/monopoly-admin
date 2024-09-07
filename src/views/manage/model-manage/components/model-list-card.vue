@@ -32,10 +32,10 @@ onBeforeUnmount(() => {
 	modelPreview = null;
 });
 
-const handleEdit = () => {
+function handleEdit(){
 	emit("edit");
 };
-const handleDelete = () => {
+function handleDelete(){
 	ElMessageBox.alert(
 		"删除这个模型会导致使用这个模型的其他数据一并删除,如( ItemType, MapItem ),你确定要删除吗",
 		"警告",
@@ -50,7 +50,7 @@ const handleDelete = () => {
 	});
 };
 
-const handleCommand = (command: string) => {
+function handleCommand(command: string){
 	switch (command) {
 		case "edit":
 			handleEdit();

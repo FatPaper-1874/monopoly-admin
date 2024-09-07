@@ -15,7 +15,7 @@ const currentPage = ref(1);
 const totalPage = ref(0);
 const size = ref(10);
 
-const handleCurrentChange = () => {
+function handleCurrentChange(){
   loadMusicList();
 };
 

@@ -23,8 +23,6 @@ const handleCreateStreet = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid) => {
     if (valid) {
       const { name, increase } = { ...toRaw(newStreetForm) };
-      console.log(name, increase);
-
       await createStreet(name, increase, mapId);
 
       formEl.resetFields();

@@ -21,6 +21,5 @@ export const updateModel = async (id: string, name: string, modelFile?: File) =>
 	formData.append("id", id);
 	formData.append("name", name);
 	modelFile && formData.append("model", modelFile);
-	console.log(modelFile)
 	return await _axios.post("/model/update", formData)
 }

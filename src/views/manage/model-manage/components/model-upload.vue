@@ -39,7 +39,7 @@ const updateRules = reactive<FormRules>({
   modelFile: [{required: false, message: "请选择模型", trigger: "blur"}],
 });
 
-const submitUpload = () => {
+function submitUpload(){
   fromRef.value!.validate(async (valid) => {
     if (!valid) return;
     try {
@@ -57,17 +57,17 @@ const submitUpload = () => {
   });
 };
 
-const handleClose = (done: any) => {
+function handleClose(done: any){
   fromRef.value?.resetFields();
   emit("close");
 };
 
-const handleUploadSuccess = (res: any) => {
+function handleUploadSuccess(res: any){
   fromRef.value?.resetFields();
   emit("success");
 };
 
-const handleUploadFailed = () => {
+function handleUploadFailed(){
   fromRef.value?.resetFields();
   emit("error");
 };

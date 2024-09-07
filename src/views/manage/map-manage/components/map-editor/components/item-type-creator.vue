@@ -49,7 +49,7 @@ const loadModelList = async () => {
   _modelsList.value = modelList;
 };
 
-const handleModelSelected = (modelId: string) => {
+function handleModelSelected(modelId: string){
   const model = _modelsList.value.find(item => item.id === modelId);
   if (model) newTypeForm.name = model.name;
 }

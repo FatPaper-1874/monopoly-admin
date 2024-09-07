@@ -9,7 +9,7 @@ const emits = defineEmits(["update:operationMode"]);
 
 const _operationMode = ref<OperationMode>(props.operationMode);
 
-const onModeChange = (newMode: any) => {
+function onModeChange(newMode: any){
 	emits("update:operationMode", newMode);
 };
 </script>

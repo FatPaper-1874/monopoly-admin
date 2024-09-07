@@ -42,7 +42,7 @@ export class MapPreviewerRenderer extends ThreeSceneBase {
             this.controls.update();
 
             super.render();
-        };
+        }
 
         loop();
     }

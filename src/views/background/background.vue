@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { shuffleArray } from '@/utils'
 
 const SVGLIST = ["bolt", "bomb", "heart", "house", "palette", "sack-dollar", "wand-magic-sparkles"];
-const getDoubleSvgList = () => {
+function getDoubleSvgList(){
   const _svgList = shuffleArray(SVGLIST)
   return _svgList.concat(_svgList);
 }

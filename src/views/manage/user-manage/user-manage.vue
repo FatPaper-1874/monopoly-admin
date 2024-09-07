@@ -23,9 +23,9 @@ const _dialogVisible = ref(false);
 
 const _currentUserId = ref("");
 
-const handleCurrentChange = () => {};
+function handleCurrentChange(){};
 
-const handleUserEdit = (user: User) => {
+function handleUserEdit(user: User){
 	_dialogVisible.value = true;
 	_currentUserId.value = user.id;
 	_userForm.username = user.username;
@@ -34,7 +34,7 @@ const handleUserEdit = (user: User) => {
 	_userForm.color = user.color;
 };
 
-const handleUserDelete = (id: string) => {
+function handleUserDelete(id: string){
 	ElMessageBox.alert("你确定要删除这个用户吗", "警告", {
 		confirmButtonText: "确定删除",
 		cancelButtonText: "取消",
@@ -45,7 +45,7 @@ const handleUserDelete = (id: string) => {
 	});
 };
 
-const handleDialogClose = () => {
+function handleDialogClose(){
 	_dialogVisible.value = false;
 	_currentUserId.value = "";
 	_userForm.username = "";

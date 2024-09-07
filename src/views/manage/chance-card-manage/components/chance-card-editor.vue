@@ -45,7 +45,6 @@ const handleCreateOrUpdateChanceCard = async (formEl: FormInstance | undefined) 
   if (!formEl) return;
   await formEl.validate(async (valid) => {
     if (valid) {
-      console.log(chanceCardForm)
       const {name, describe, type, color, icon, effectCode} = {
         ...chanceCardForm,
       };

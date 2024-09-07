@@ -15,11 +15,11 @@ const size = ref(10);
 
 const isLoading = ref(true);
 
-const handleArrivedEventCreate = () => {
+function handleArrivedEventCreate(){
   router.push({path: "/arrived-event-editor"});
 };
 
-const handleArrivedEventEdit = (id: string) => {
+function handleArrivedEventEdit(id: string){
   router.push({path: "/arrived-event-editor", query: {id}});
 };
 

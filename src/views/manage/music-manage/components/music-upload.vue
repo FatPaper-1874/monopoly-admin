@@ -27,20 +27,19 @@ const rules = reactive<FormRules>({
   fileList: [{required: true, message: "请选择音乐", trigger: "blur"}],
 });
 
-const submitUpload = () => {
+function submitUpload(){
   fromRef.value!.validate((valid) => {
     if (!valid) return;
-    console.log("表单校验完成");
     uploadRef.value!.submit();
   });
 };
 
-const handleClose = (done: any) => {
+function handleClose(done: any){
   fromRef.value?.resetFields();
   emit("close");
 };
 
-const handleUploadSuccess = (res: any) => {
+function handleUploadSuccess(res: any){
   fromRef.value?.resetFields();
   if (res.status === 200) {
     ElMessage({
@@ -51,7 +50,7 @@ const handleUploadSuccess = (res: any) => {
   emit("success");
 };
 
-const handleUploadFailed = (res: any) => {
+function handleUploadFailed(res: any){
   fromRef.value?.resetFields();
   if (res.status === 500) {
     ElMessage({

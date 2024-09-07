@@ -19,7 +19,6 @@ const _itemTypeList = ref<Array<ItemType>>([]);
 let modelPreviewer: ModelPreviewerRenderer | undefined;
 
 function handleTypeSelect(newType: ItemType) {
-  console.log(newType)
   if (modelPreviewer) {
     if (newType) {
       modelPreviewer.loadModel(newType.model.fileUrl, true);

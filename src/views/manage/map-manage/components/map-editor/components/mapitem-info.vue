@@ -24,7 +24,7 @@ const handleLinkMapItem = async () => {
   }
 };
 
-const handleCopyCurrentId = () => {
+function handleCopyCurrentId(){
   if (!props.currentMapItem) return;
   linkTargetId.value = props.currentMapItem.id;
   ElMessage({message: "复制成功", type: "success"});

@@ -17,21 +17,20 @@ const _roleList = ref<Role[]>([]);
 
 const isLoading = ref(true);
 
-const handleUploadSuccess = () => {
+function handleUploadSuccess(){
   createRoleVisible.value = false;
-  console.log('update')
   loadRoleList();
 };
 
 const handleCurrentChange = async () => {
 };
 
-const handleCreateRole = () => {
+function handleCreateRole(){
   currentRole.value = undefined;
   createRoleVisible.value = true;
 }
 
-const handleEdit = (role: Role) => {
+function handleEdit(role: Role){
   currentRole.value = role;
   createRoleVisible.value = true;
 }

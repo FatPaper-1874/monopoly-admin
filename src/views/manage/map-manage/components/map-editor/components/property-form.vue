@@ -36,14 +36,12 @@ onMounted(() => {
 watch(
 	() => props.currentMapItem,
 	async (newMapItem) => {
-		console.log(newMapItem);
-		
 		updateForm(newMapItem);
 	},
 	{ deep: true }
 );
 
-const updateForm = (newMapItem: MapItem | undefined) => {
+function updateForm(newMapItem: MapItem | undefined){
 	if (newMapItem) {
 		if (newMapItem.property) {
 			const { id, name, sellCost, buildCost, cost_lv0, cost_lv1, cost_lv2, street } = newMapItem.property;

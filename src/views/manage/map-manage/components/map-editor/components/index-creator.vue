@@ -42,7 +42,6 @@ function findPath(mapItems: MapItem[]): string[] | never {
 	if (!traversedItems || traversedItems.length == 0) {
 		throw new Error("无法遍历整个数组");
 	}
-	console.log(traversedItems);
 
 	return traversedItems.map((i) => i.id);
 }

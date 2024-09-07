@@ -151,7 +151,7 @@ const loadMapIndexs = async () => {
   mapEditor && mapEditor.updateIndexPath(mapInfo.mapIndexs);
 };
 
-const handleArrivedEventBindChange = () => {
+function handleArrivedEventBindChange(){
   loadMapItems();
 }
 
@@ -193,7 +193,7 @@ onMounted(async () => {
 //机会卡
 const chanceCardSelectorVisible = ref(false);
 
-const handleChanCardSelect = (chanceCardIdList: string[]) => {
+function handleChanCardSelect(chanceCardIdList: string[]){
   updateChanceCardInMap(toRaw(chanceCardIdList), mapId);
   chanceCardSelectorVisible.value = false;
 };

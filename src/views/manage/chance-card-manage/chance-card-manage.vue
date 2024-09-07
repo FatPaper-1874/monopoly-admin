@@ -13,19 +13,19 @@ const size = ref(10);
 
 const isLoading = ref(true);
 
-const handleChanceCardCreate = () => {
+function handleChanceCardCreate(){
   router.push({path: "/chance-card-editor"});
 };
 
-const handleChanceCardEdit = (id: string) => {
+function handleChanceCardEdit(id: string){
   router.push({path: "/chance-card-editor", query: {id}});
 };
 
-const handleChanceCardDelete = () => {
+function handleChanceCardDelete(){
   loadChanceCardList();
 };
 
-const handleCurrentChange = () => {
+function handleCurrentChange(){
   loadChanceCardList();
 };
 

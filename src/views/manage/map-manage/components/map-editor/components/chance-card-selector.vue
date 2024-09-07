@@ -23,15 +23,15 @@ onUpdated(async () => {
   isLoading.value = false;
 });
 
-const handleSelected = (selectedList: string[]) => {
+function handleSelected(selectedList: string[]){
   _selectedIdList.value = selectedList;
 };
 
-const handleClose = () => {
+function handleClose(){
   emit("close");
 };
 
-const handleConfirm = () => {
+function handleConfirm(){
   emit("confirm", _selectedIdList.value);
 };
 </script>

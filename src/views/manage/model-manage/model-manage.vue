@@ -18,7 +18,7 @@ const size = ref(8);
 
 const currentModel = ref<Model>();
 
-const handleCurrentChange = () => {
+function handleCurrentChange(){
   loadModelList();
 };
 
@@ -32,21 +32,21 @@ const loadModelList = async () => {
   isLoading.value = false;
 };
 
-const handleUploadSuccess = () => {
+function handleUploadSuccess(){
   createModelVisible.value = false;
   loadModelList();
 };
 
-const handleModelCreate = ()=>{
+function handleModelCreate(){
   currentModel.value = undefined;
   createModelVisible.value = true
 }
 
-const handleModelDelete = () => {
+function handleModelDelete(){
   loadModelList();
 };
 
-const handleModelEdit = (model:Model) => {
+function handleModelEdit(model:Model){
   currentModel.value = model;
   createModelVisible.value = true
 };

@@ -40,11 +40,11 @@ const loadModel = async () => {
 const animationList = ref<string[]>([]);
 const isAnimationLoop = ref<boolean>(false);
 
-const updateAnimationList = (newList: string[]) => {
+function updateAnimationList(newList: string[]){
   animationList.value = newList;
 }
 
-const doAnimation = (name: string) => {
+function doAnimation(name: string){
   role && role.doAnimation(name, isAnimationLoop.value);
 }
 </script>

@@ -20,10 +20,10 @@ onUnmounted(() => {
   roleCardPreviewerRenderer && roleCardPreviewerRenderer.destroy();
 })
 
-const handleEdit = () => {
+function handleEdit(){
   emit("edit")
 };
-const handleDelete = () => {
+function handleDelete(){
   ElMessageBox.alert("你确定要删除吗", "警告", {
     confirmButtonText: "确定删除",
     cancelButtonText: "取消",
@@ -34,7 +34,7 @@ const handleDelete = () => {
   });
 };
 
-const handleCommand = (command: string) => {
+function handleCommand(command: string){
   switch (command) {
     case "edit":
       handleEdit();

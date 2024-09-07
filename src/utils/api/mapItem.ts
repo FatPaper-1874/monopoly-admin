@@ -11,10 +11,10 @@ export const createMapItem = (
     return _axios.post("/map-item/create", {_id, x, y, rotation, typeId, mapId});
 };
 
-export const deleteMapItem = (id: string) => {
+export function deleteMapItem(id: string){
     return _axios.delete("/map-item/delete", {params: {id}});
 };
 
-export const linkMapItem = (sourceId: string, targetId: string) => {
+export function linkMapItem(sourceId: string, targetId: string){
     return _axios.post("/map-item/link", {sourceId, targetId});
 };

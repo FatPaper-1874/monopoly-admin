@@ -7,7 +7,7 @@ import chanceCardItem from "@/components/sample/chance-card.vue";
 const { chanceCard } = defineProps<{ chanceCard: ChanceCard }>();
 const emit = defineEmits(["delete", "edit"]);
 
-const handleEdit = () => {
+function handleEdit(){
 	emit("edit", chanceCard.id);
 };
 
@@ -22,7 +22,7 @@ const handleDelete = async () => {
 	});
 };
 
-const handleCommand = (command: string) => {
+function handleCommand(command: string){
 	switch (command) {
 		case "edit":
 			handleEdit();

@@ -1,18 +1,78 @@
-# Vue 3 + TypeScript + Vite
+# monopoly-admin
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+FatPaper 大富翁的管理后台
 
-## Recommended IDE Setup
+#### 运行
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+`yarn dev`
 
-## Type Support For `.vue` Imports in TS
+#### 打包
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+`yarn build`
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+#### 目录结构
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+```
+├─📁 public--------------------------------- # 资源
+│ ├─📁 draco-------------------------------- # 模型解密工具库
+│ ├─📁 images------------------------------- # 图片
+│ ├─📁 models------------------------------- # 模型
+│ └─📄 logo.ico----------------------------- # logo
+├─📁 src
+│ ├─📁 assets------------------------------- # 静态资源
+│ │ ├─📁 font------------------------------- # 字体
+│ │ └─📄 style.scss------------------------- # 全局样式
+│ ├─📁 components
+│ │ ├─📁 code-editor------------------------ # 代码编辑器组件
+│ │ │ ├─📄 base-interface.d.ts-------------- # 接口提示配置文件
+│ │ │ └─📄 index.vue
+│ │ └─📁 sample----------------------------- # 通用组件
+│ │   ├─📄 chance-card.vue------------------ # 机会卡展示组件
+│ │   └─📄 item-selector.vue---------------- # 通用选择器组件
+│ ├─📁 enums-------------------------------- # 枚举
+│ ├─📁 interfaces--------------------------- # 接口
+│ ├─📁 router------------------------------- # 路由
+│ │ ├─📄 index.ts
+│ │ └─📄 menus.ts--------------------------- # 菜单路由
+│ ├─📁 utils
+│ │ ├─📁 api-------------------------------- # api
+│ │ ├─📁 axios------------------------------ # axios
+│ │ ├─📁 spine-threejs---------------------- # spine在three.js中运行的工具
+│ │ ├─📁 three------------------------------ # three.js相关
+│ │ ├─📄 color.ts--------------------------- # 颜色工具函数
+│ │ └─📄 index.ts--------------------------- # 工具函数集
+│ ├─📁 views-------------------------------- # 页面
+│ │ ├─📁 background------------------------- # 背景
+│ │ ├─📁 login------------------------------ # 登陆页面
+│ │ ├─📁 manage----------------------------- # 管理页面
+│ │ │ ├─📁 arrived-event-manage------------- # 到达事件管理
+│ │ │ ├─📁 chance-card-manage--------------- # 机会卡管理
+│ │ │ │ ├─📁 components
+│ │ │ │ │ ├─📄 chance-card-editor.vue------- # 机会卡编辑器
+│ │ │ │ │ ├─📄 chance-card-list-card.vue
+│ │ │ │ │ └─📄 model-text------------------- # 代码编辑器模板
+│ │ │ │ └─📄 chance-card-manage.vue
+│ │ │ ├─📁 map-manage----------------------- # 地图管理
+│ │ │ │ ├─📁 components
+│ │ │ │ │ ├─📁 map-editor------------------- # 地图编辑器
+│ │ │ │ │ │ ├─📁 components
+│ │ │ │ │ │ ├─📁 enum
+│ │ │ │ │ │ ├─📁 utils
+│ │ │ │ │ │ ├─📄 map-editor.ts-------------- # 地图编辑器渲染工具
+│ │ │ │ │ │ └─📄 map-editor.vue
+│ │ │ │ │ └─📄 map-list-card.vue
+│ │ │ │ └─📄 map-manage.vue
+│ │ │ ├─📁 model-manage--------------------- # 模型管理
+│ │ │ ├─📁 music-manage--------------------- # 音乐管理
+│ │ │ ├─📁 role-manage---------------------- # 角色管理
+│ │ │ │ ├─📁 components
+│ │ │ │ │ ├─📁 utils------------------------ # 角色展示相关工具
+│ │ │ │ │ ├─📄 role-list-card.vue
+│ │ │ │ │ ├─📄 role-previewer.vue
+│ │ │ │ │ └─📄 role-upload.vue
+│ │ │ │ └─📄 role-manage.vue
+│ │ │ └─📁 user-manage---------------------- # 用户管理
+│ │ └─📄 main.vue--------------------------- # 管理主页面
+│ └─📄 App.vue------------------------------ # 项目主页面
+└─📄 global.config.ts----------------------- # 配置数据桥梁
+```

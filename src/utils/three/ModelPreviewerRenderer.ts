@@ -1,10 +1,10 @@
 import { AmbientLight, Box3, Color, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import {ThreeSceneBase} from "@/utils/three/ThreeSceneBase";
-import {getDracoLoader} from "@/utils/three/draco";
+import { ThreeSceneBase } from "@/utils/three/ThreeSceneBase";
+import { getDracoLoader } from "@/utils/three/draco";
+import { __PROTOCOL__ } from "@G/global.config";
 
 export class ModelPreviewerRenderer extends ThreeSceneBase {
-
 	constructor(canvas: HTMLCanvasElement) {
 		super(canvas);
 		this.scene.background = new Color(0xeeeeee);
@@ -21,7 +21,7 @@ export class ModelPreviewerRenderer extends ThreeSceneBase {
 		}
 		const loader = new GLTFLoader();
 		loader.setDRACOLoader(getDracoLoader());
-		const gltf = await loader.loadAsync(`http://${modelFileUrl}`);
+		const gltf = await loader.loadAsync(`${__PROTOCOL__}://${modelFileUrl}`);
 		const model = gltf.scene;
 		this.scene.add(model);
 		const box = new Box3().setFromObject(model);
@@ -32,7 +32,7 @@ export class ModelPreviewerRenderer extends ThreeSceneBase {
 		this.camera.position.y += distance;
 		this.camera.position.z += distance;
 		this.camera.lookAt(center);
-		
+
 		const light = new AmbientLight(0xffffff, 4.5); // soft white light
 		this.scene.add(light);
 
@@ -66,6 +66,6 @@ export class ModelPreviewerRenderer extends ThreeSceneBase {
 	}
 
 	public destroy() {
-		super.destroy()
+		super.destroy();
 	}
 }

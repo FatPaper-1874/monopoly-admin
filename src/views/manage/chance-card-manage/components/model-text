@@ -1,7 +1,9 @@
-let gameProcess: GameProcess
-
-function effectFunction(sourcePlayer: Player, target: Player | Property | Player[] | Property[]){
-    //CODING AREA
-
-    //CODING AREA
+async function effectFunction(
+	sourcePlayer: PlayerInterface,
+	target: PlayerInterface | PropertyInterface | PlayerInterface[] | PropertyInterface[],
+	gameProcess: GameProcess
+) {
+	//CODING AREA
+    
+	//CODING AREA
 }

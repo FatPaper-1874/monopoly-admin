@@ -17,7 +17,7 @@ import {
 import { computed, onBeforeMount, onMounted, reactive, ref, toRaw } from "vue";
 import { useRoute } from "vue-router";
 import CodeEditor from "@/components/code-editor/index.vue";
-import ModelText from "@/views/manage/chance-card-manage/components/model-text?raw";
+import ModelText from "./model-text?raw";
 import { __MONOPOLYSERVER__ } from "@G/global.config";
 
 const modelText = ref<string>(ModelText);

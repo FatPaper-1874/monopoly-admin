@@ -1,7 +1,5 @@
-let gameProcess: GameProcess
-
-function effectFunction(arrivedPlayer: Player) {
-    //CODING AREA
-
-    //CODING AREA
+async function effectFunction(arrivedPlayer: PlayerInterface, gameProcess: GameProcess) {
+	//CODING AREA
+    
+	//CODING AREA
 }

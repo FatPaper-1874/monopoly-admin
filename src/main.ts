@@ -30,6 +30,7 @@ import {
 	faPlus,
 	faUpDownLeftRight,
 	faHandPointer,
+	faGauge,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* add icons to the library */
@@ -50,7 +51,8 @@ library.add(
 	faWarning,
 	faPlus,
 	faUpDownLeftRight,
-	faHandPointer
+	faHandPointer,
+	faGauge,
 );
 
 const app = createApp(App);

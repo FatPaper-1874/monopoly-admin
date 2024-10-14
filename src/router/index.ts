@@ -10,6 +10,7 @@ const routes = [
     {
         path: "/",
         alias: "/main",
+        redirect: '/dashboard',
         name: "main",
         component: () => import('@/views/main.vue'),
         children: menuRoutes.concat(staticRoute)

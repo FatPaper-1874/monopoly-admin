@@ -1,18 +1,57 @@
 <script setup lang="ts">
 import * as monaco from "monaco-editor";
-import { nextTick, onMounted, watch } from "vue";
+import { nextTick, onMounted, ref, watch, watchEffect } from "vue";
 import { ElMessage } from "element-plus";
+import { onBeforeUnmount } from "vue";
 
-const props = defineProps<{ modelText: string }>();
-const emits = defineEmits(["update:modelValue"]);
+const props = defineProps<{ modelText: string; modelValue: string }>();
+const emits = defineEmits(["update:modelValue", "save"]);
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
 
+const contentCache = ref(props.modelValue);
+
+const handleSaveKey = (event: KeyboardEvent) => {
+	if (event.ctrlKey && event.key === "s") {
+		event.preventDefault(); // 阻止默认的保存行为
+		emits("save");
+	}
+};
+
+function mixContent(model: string, content: string) {
+	const oldModelTextArr = model.split("\n");
+	const firstTagIndex = oldModelTextArr.findIndex((i) => i.includes("//CODING AREA"));
+	oldModelTextArr.splice(firstTagIndex + 1, 0, content);
+	return oldModelTextArr.join("\n");
+}
+
+watch(
+	() => props.modelText,
+	(newValue) => {
+		const content = mixContent(newValue, contentCache.value);
+		editor && editor.setValue(content);
+	}
+);
+
 onMounted(() => {
+	// monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+	// 	target: monaco.languages.typescript.ScriptTarget.ESNext,
+	// 	module: monaco.languages.typescript.ModuleKind.CommonJS,
+	// });
+
+	// const model = monaco.editor.createModel(code, "typescript");
+
+	// const output = monaco.languages.typescript.transpileModule(code, {
+	// 	compilerOptions: { module: monaco.languages.typescript.ModuleKind.CommonJS },
+	// });
 	import("./base-interface.d.ts?raw").then((res) => {
 		const baseInterface = res.default;
-		monaco.languages.typescript.typescriptDefaults.addExtraLib(baseInterface);
+		monaco.languages.typescript.typescriptDefaults.setExtraLibs([{ content: baseInterface }]);
 		const container = document.getElementById("code-editor-container") as HTMLElement;
-		editor = monaco.editor.create(container, { value: props.modelText, language: "typescript", automaticLayout: true });
+		editor = monaco.editor.create(container, {
+			value: mixContent(props.modelText, props.modelValue),
+			language: "typescript",
+			automaticLayout: true,
+		});
 		editor.onDidChangeModelContent((e) => {
 			if (!editor) return;
 			const content = editor.getValue();
@@ -21,6 +60,7 @@ onMounted(() => {
 				ElMessage({ type: "error", message: "请不要删除 //CODING AREA" });
 				return;
 			}
+			contentCache.value = match[1].trim();
 			emits("update:modelValue", match[1].trim());
 		});
 		nextTick(() => {
@@ -30,6 +70,12 @@ onMounted(() => {
 			editor.setValue(editor.getValue());
 		});
 	});
+	window.addEventListener("keydown", handleSaveKey);
+});
+
+onBeforeUnmount(() => {
+	window.removeEventListener("keydown", handleSaveKey);
+	editor && editor.dispose();
 });
 </script>
 

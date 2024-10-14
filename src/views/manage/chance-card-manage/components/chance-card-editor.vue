@@ -20,20 +20,44 @@ import CodeEditor from "@/components/code-editor/index.vue";
 import ModelText from "./model-text?raw";
 import { __MONOPOLYSERVER__ } from "@G/global.config";
 
-const modelText = ref<string>(ModelText);
+const modleText = computed(() => {
+	return ModelText.replaceAll("%TYPE%", targetTypeMap[chanceCardForm.type]);
+});
 
 const route = useRoute();
 const _chanceCardId = route.query.id as string;
-const _chanceCardTypes = Array.from(Object.values(ChanceCardType));
 const editorVisible = ref(false);
 
 const tempIconFile = ref<UploadRawFile | undefined>();
 const iconUploadRef = ref<UploadInstance>();
 
-const chanceCardForm = reactive({
+const targetNameMap: Record<ChanceCardType, string> = {
+	[ChanceCardType.ToSelf]: "对自己生效",
+	[ChanceCardType.ToOtherPlayer]: "对其他玩家生效",
+	[ChanceCardType.ToPlayer]: "对玩家生效",
+	[ChanceCardType.ToProperty]: "对地产生效",
+	[ChanceCardType.ToMapItem]: "对格子生效",
+};
+
+const targetTypeMap: Record<ChanceCardType, string> = {
+	[ChanceCardType.ToSelf]: "PlayerInterface",
+	[ChanceCardType.ToOtherPlayer]: "PlayerInterface",
+	[ChanceCardType.ToPlayer]: "PlayerInterface",
+	[ChanceCardType.ToProperty]: "PropertyInterface",
+	[ChanceCardType.ToMapItem]: "MapItemInterface",
+};
+
+const chanceCardForm = reactive<{
+	name: string;
+	describe: string;
+	type: ChanceCardType;
+	icon: string;
+	color: string;
+	effectCode: string;
+}>({
 	name: "",
 	describe: "",
-	type: "",
+	type: ChanceCardType.ToPlayer,
 	icon: "",
 	color: randomRGBColor(),
 	effectCode: "",
@@ -95,7 +119,7 @@ const uploadAction = computed(() => `${__MONOPOLYSERVER__}/chance_card/${_chance
 const setChanceCardInfo = (
 	name: string,
 	describe: string,
-	type: string,
+	type: ChanceCardType,
 	color: string,
 	icon: string,
 	effectCode: string
@@ -105,11 +129,7 @@ const setChanceCardInfo = (
 	chanceCardForm.type = type;
 	chanceCardForm.color = color;
 	chanceCardForm.icon = icon;
-	const oldModelText = modelText.value;
-	const oldModelTextArr = oldModelText.split("\n");
-	const firstTagIndex = oldModelTextArr.findIndex((i) => i.includes("//CODING AREA"));
-	oldModelTextArr.splice(firstTagIndex + 1, 0, effectCode);
-	modelText.value = oldModelTextArr.join("\n");
+	chanceCardForm.effectCode = effectCode;
 	editorVisible.value = true;
 };
 
@@ -163,12 +183,7 @@ onBeforeMount(() => {
 
 					<el-form-item label="机会卡类型" prop="type">
 						<el-select v-model="chanceCardForm.type">
-							<el-option
-								v-for="_typeName in _chanceCardTypes"
-								:value="_typeName"
-								:label="_typeName"
-								:key="_typeName"
-							></el-option>
+							<el-option v-for="(value, key) in targetNameMap" :value="key" :label="value" :key="key"></el-option>
 						</el-select>
 					</el-form-item>
 
@@ -210,7 +225,7 @@ onBeforeMount(() => {
 				</span>
 			</div>
 			<div class="editor-area">
-				<code-editor v-if="editorVisible" :model-text="modelText" v-model="chanceCardForm.effectCode" />
+				<code-editor @save="handleCreateOrUpdateChanceCard(chanceCardFormRef)" v-if="editorVisible" :model-text="modleText" v-model="chanceCardForm.effectCode" />
 			</div>
 		</div>
 	</div>

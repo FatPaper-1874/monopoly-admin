@@ -66,11 +66,11 @@ const handleCreateArrivedEvent = async (formEl: FormInstance | undefined) => {
 const loadArrivedEventInfo = async (id: string) => {
 	const { name, describe, iconUrl, effectCode } = await getArrivedEventById(id);
 	Object.assign(arrivedEventFrom, { name, describe, iconUrl: `${__PROTOCOL__}://${iconUrl}`, effectCode });
-	const oldModelText = modelText.value;
-	const oldModelTextArr = oldModelText.split("\n");
-	const firstTagIndex = oldModelTextArr.findIndex((i) => i.includes("//CODING AREA"));
-	oldModelTextArr.splice(firstTagIndex + 1, 0, effectCode);
-	modelText.value = oldModelTextArr.join("\n");
+	// const oldModelText = modelText.value;
+	// const oldModelTextArr = oldModelText.split("\n");
+	// const firstTagIndex = oldModelTextArr.findIndex((i) => i.includes("//CODING AREA"));
+	// oldModelTextArr.splice(firstTagIndex + 1, 0, effectCode);
+	// modelText.value = oldModelTextArr.join("\n");
 	editorVisible.value = true;
 };
 

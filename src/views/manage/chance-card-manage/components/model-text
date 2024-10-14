@@ -1,6 +1,6 @@
 async function effectFunction(
 	sourcePlayer: PlayerInterface,
-	target: PlayerInterface | PropertyInterface | PlayerInterface[] | PropertyInterface[],
+	target: %TYPE%,
 	gameProcess: GameProcess
 ) {
 	//CODING AREA

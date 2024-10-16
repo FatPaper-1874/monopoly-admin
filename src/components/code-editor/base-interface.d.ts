@@ -68,8 +68,8 @@ enum PlayerEvents {
 	BeforeSetPropertiesList = "BeforeSetPropertiesList",
 	AfterSetPropertiesList = "AfterSetPropertiesList",
 
-	// BeforeGainProperty = "BeforeGainProperty",
-	// AfterGainProperty = "AfterGainProperty",
+	BeforeGainProperty = "BeforeGainProperty",
+	AfterGainProperty = "AfterGainProperty",
 
 	BeforeRound = "BeforeRound",
 	AfterRound = "AfterRound",
@@ -124,8 +124,8 @@ interface PlayerEventsCallback {
 	[PlayerEvents.BeforeRound]: (player: PlayerInterface) => Promise<void>;
 	[PlayerEvents.AfterRound]: (player: PlayerInterface) => Promise<void>;
 
-	// [PlayerEvents.BeforeGainProperty]: (newProperty: PropertyInterface) => PropertyInterface | undefined;
-	// [PlayerEvents.AfterGainProperty]: (newProperty: PropertyInterface) => undefined;
+	[PlayerEvents.BeforeGainProperty]: (newProperty: PropertyInterface) => PropertyInterface | undefined;
+	[PlayerEvents.AfterGainProperty]: (newProperty: PropertyInterface) => undefined;
 
 	[PlayerEvents.BeforeLoseProperty]: (lostProperty: PropertyInterface) => PropertyInterface | undefined;
 	[PlayerEvents.AfterLoseProperty]: (lostProperty: PropertyInterface) => undefined;
@@ -142,11 +142,11 @@ interface PlayerEventsCallback {
 	[PlayerEvents.BeforeSetMoney]: (moneyValue: number) => number | undefined;
 	[PlayerEvents.AfterSetMoney]: (moneyValue: number) => undefined;
 
-	[PlayerEvents.BeforeGain]: (gainMoney: number) => number | undefined;
-	[PlayerEvents.AfterGain]: (gainMoney: number) => undefined;
+	[PlayerEvents.BeforeGain]: (gainMoney: number, source?: PlayerInterface) => number | undefined;
+	[PlayerEvents.AfterGain]: (gainMoney: number, source?: PlayerInterface) => undefined;
 
-	[PlayerEvents.BeforeCost]: (costMoney: number) => number | undefined;
-	[PlayerEvents.AfterCost]: (costMoney: number) => undefined;
+	[PlayerEvents.BeforeCost]: (costMoney: number, target?: PlayerInterface) => number | undefined;
+	[PlayerEvents.AfterCost]: (costMoney: number, target?: PlayerInterface) => undefined;
 
 	[PlayerEvents.BeforeStop]: (stopValue: number) => number | undefined;
 	[PlayerEvents.AfterStop]: (stopValue: number) => undefined;
@@ -171,12 +171,14 @@ interface PropertyInterface {
 	getCost_lv0: () => number;
 	getCost_lv1: () => number;
 	getCost_lv2: () => number;
-	getOwner: () => { id: string; name: string; color: string; avatar: string } | undefined;
+	getOwner: () => PlayerInterface | undefined;
 	getPassCost: () => number;
 
 	//设置房产信息
 	setOwner: (player: PlayerInterface | undefined) => void;
 	setBuildingLevel: (level: 0 | 1 | 2) => void;
+
+	getPropertyInfo: () => PropertyInfo;
 }
 
 interface PlayerInterface {
@@ -201,8 +203,8 @@ interface PlayerInterface {
 	//钱相关
 	setMoney: (money: number) => void;
 	getMoney: () => number;
-	cost: (money: number) => boolean;
-	gain: (money: number) => number;
+	cost: (money: number, target?: PlayerInterface) => boolean;
+	gain: (money: number, source?: PlayerInterface) => number;
 
 	//游戏相关
 	setStop: (stop: number) => void;
@@ -211,16 +213,9 @@ interface PlayerInterface {
 	getPositionIndex: () => number;
 	walk: (step: number) => Promise<void>;
 	tp: (positionIndex: number) => Promise<void>;
-	addEventListener: <K extends PlayerEvents[keyof PlayerEvents]>(
-		eventName: K,
-		fn: PlayerEventsCallback[K],
-		triggerTimes?: number,
-		buff?: {
-			name: string;
-			describe: string;
-			source: string;
-		}
-	) => void;
+	addEventListener: <K extends PlayerEvents>(eventName: K, fn: PlayerEventsCallback[K], triggerTimes?: number) => void;
+
+	getPlayerInfo: () => PlayerInfo;
 }
 
 interface ChanceCardInterface {

@@ -1,3 +1,5 @@
+let utils: Utils;
+
 async function effectFunction(arrivedPlayer: PlayerInterface, gameProcess: GameProcess) {
 	//CODING AREA
     

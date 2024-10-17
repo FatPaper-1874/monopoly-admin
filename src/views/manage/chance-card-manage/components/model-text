@@ -1,3 +1,5 @@
+let utils: Utils;
+
 async function effectFunction(
 	sourcePlayer: PlayerInterface,
 	target: %TYPE%,

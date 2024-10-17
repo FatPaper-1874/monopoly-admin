@@ -29,6 +29,16 @@ watch(
 	(newValue) => {
 		const content = mixContent(newValue, contentCache.value);
 		editor && editor.setValue(content);
+		console.log("change");
+
+		nextTick(() => {
+			if (!editor) return;
+			const formatDocument = editor.getAction("editor.action.formatDocument");
+			formatDocument && formatDocument.run();
+		});
+	},
+	{
+		immediate: true,
 	}
 );
 
@@ -52,6 +62,7 @@ onMounted(() => {
 			language: "typescript",
 			automaticLayout: true,
 		});
+
 		editor.onDidChangeModelContent((e) => {
 			if (!editor) return;
 			const content = editor.getValue();
@@ -65,8 +76,6 @@ onMounted(() => {
 		});
 		nextTick(() => {
 			if (!editor) return;
-			const formatAction = editor.getAction("editor.action.formatDocument");
-			formatAction && formatAction.run();
 			editor.setValue(editor.getValue());
 		});
 	});

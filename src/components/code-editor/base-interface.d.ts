@@ -124,10 +124,10 @@ interface PlayerEventsCallback {
 	[PlayerEvents.BeforeRound]: (player: PlayerInterface) => Promise<void>;
 	[PlayerEvents.AfterRound]: (player: PlayerInterface) => Promise<void>;
 
-	[PlayerEvents.BeforeGainProperty]: (newProperty: PropertyInterface) => PropertyInterface | undefined;
+	[PlayerEvents.BeforeGainProperty]: (newProperty: PropertyInterface) => undefined;
 	[PlayerEvents.AfterGainProperty]: (newProperty: PropertyInterface) => undefined;
 
-	[PlayerEvents.BeforeLoseProperty]: (lostProperty: PropertyInterface) => PropertyInterface | undefined;
+	[PlayerEvents.BeforeLoseProperty]: (lostProperty: PropertyInterface) => undefined;
 	[PlayerEvents.AfterLoseProperty]: (lostProperty: PropertyInterface) => undefined;
 
 	[PlayerEvents.BeforeSetCardsList]: (newCardList: ChanceCardInterface[]) => ChanceCardInterface[] | undefined;
@@ -211,9 +211,20 @@ interface PlayerInterface {
 	getStop: () => number;
 	setPositionIndex: (newIndex: number) => void;
 	getPositionIndex: () => number;
+	setBankrupted: (isBankrupted: boolean) => void;
+	getIsBankrupted: () => boolean;
 	walk: (step: number) => Promise<void>;
 	tp: (positionIndex: number) => Promise<void>;
-	addEventListener: <K extends PlayerEvents>(eventName: K, fn: PlayerEventsCallback[K], triggerTimes?: number) => void;
+
+	addEventListener: <K extends PlayerEvents>(
+		eventName: K,
+		fn: PlayerEventsCallback[K],
+		triggerTimes?: number,
+		buff?: Buff
+	) => void;
+	removeListener(eventName: PlayerEvents, id: string): void;
+	removeAllListeners(eventName: PlayerEvents): void;
+	updateBuff(buffId: string, newBuff: Buff): void;
 
 	getPlayerInfo: () => PlayerInfo;
 }
@@ -293,3 +304,14 @@ interface User {
 	avatar: string;
 	color: string;
 }
+
+interface Buff {
+	id?: string;
+	name: string;
+	describe: string;
+	source: string;
+}
+
+type Utils = {
+	randomString: (length: number) => string;
+};

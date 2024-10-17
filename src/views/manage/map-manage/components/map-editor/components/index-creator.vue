@@ -133,6 +133,7 @@ function findNeighbors(node: MapItem, items: MapItem[]): MapItem[] {
 <template>
 	<div class="index-creator">
 		<el-select
+			size="small"
 			multiple
 			value-key="color"
 			clearable
@@ -145,7 +146,7 @@ function findNeighbors(node: MapItem, items: MapItem[]): MapItem[] {
 				</div>
 			</el-option>
 		</el-select>
-		<el-button @click="handleAppendIndexList" type="primary" style="margin-left: 10px">生成路线</el-button>
+		<el-button size="small" @click="handleAppendIndexList" type="primary" style="margin-left: 10px">生成路线</el-button>
 	</div>
 </template>
 

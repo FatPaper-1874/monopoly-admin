@@ -1,3 +1,19 @@
+export interface MapData {
+	id: string;
+	name: string;
+	background: string;
+	mapItems: MapItem[];
+	properties: Property[];
+	chanceCards: ChanceCard[];
+	itemTypes: ItemType[];
+	indexList: string[];
+	streets: Street[];
+	inUse: boolean;
+	houseModel_lv0: Model | null;
+	houseModel_lv1: Model | null;
+	houseModel_lv2: Model | null;
+}
+
 export interface MapItem {
 	_id: string;
 	id: string;

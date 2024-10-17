@@ -11,11 +11,11 @@ const emit = defineEmits<{ (e: "select", selectedList: string[]): void }>();
 
 const _dataKeylist = ref<{ isSelected: boolean; [key: string]: any }[]>([]);
 
-function handleItemToggleSelected(item: any){
+function handleItemToggleSelected(item: any) {
 	const index = _dataKeylist.value.findIndex((_item) => _item[props.keyName] == item[props.keyName]);
 	_dataKeylist.value[index].isSelected = !_dataKeylist.value[index].isSelected;
 	emit("select", toRaw(_dataKeylist.value.filter((_item) => _item.isSelected).map((_item) => _item[props.keyName])));
-};
+}
 
 watch(
 	() => props.itemList,

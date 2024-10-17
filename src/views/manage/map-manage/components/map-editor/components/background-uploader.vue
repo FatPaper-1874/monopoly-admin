@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ElUpload, ElButton, ElMessage } from "element-plus";
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import { __MONOPOLYSERVER__ } from "@G/global.config";
+import { MapData } from "@/interfaces/interfaces";
 
-const props = withDefaults(defineProps<{ mapId: string }>(), { mapId: "" });
+const mapInfo = inject<MapData>("mapInfo");
 
 const uploadHeader = { Authorization: localStorage.getItem("token") };
 
@@ -40,7 +41,7 @@ const uploadAction = computed(() => `${__MONOPOLYSERVER__}/map/background`);
 		auto-upload
 		:show-file-list="false"
 		:headers="uploadHeader"
-		:data="{ mapId }"
+		:data="{ mapId: mapInfo ? mapInfo.id : '' }"
 		ref="uploadRef"
 		:action="uploadAction"
 		@success="handleUploadSuccess"

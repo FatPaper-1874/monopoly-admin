@@ -80,7 +80,7 @@ const createFormVisible = ref(false);
   <Transition name="item-type-selector-fade">
     <div class="item-type-selector" v-if="visible">
       <div class="form">
-        <el-select value-key="color" @change="handleTypeSelect" clearable v-model="currentType"
+        <el-select size="small" value-key="color" @change="handleTypeSelect" clearable v-model="currentType"
                    placeholder="选择类型进入添加模式">
           <el-option v-for="(item, index) in _itemTypeList" :key="item.color" :value="item" :label="item.name">
             <div class="options-container">
@@ -91,7 +91,7 @@ const createFormVisible = ref(false);
             </div>
           </el-option>
         </el-select>
-        <el-button @click="createFormVisible = true" class="add-type__button" type="primary">
+        <el-button size="small" @click="createFormVisible = true" class="add-type__button" type="primary">
           <FontAwesomeIcon icon="plus"/>
           添加类型
         </el-button>

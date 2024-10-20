@@ -21,11 +21,11 @@ const propertyId = ref("");
 
 const newPropertyForm = reactive({
 	name: "",
-	sellCost: 0,
-	buildCost: 0,
-	cost_lv0: 0,
-	cost_lv1: 0,
-	cost_lv2: 0,
+	sellCost: 100,
+	buildCost: 100,
+	cost_lv0: 100,
+	cost_lv1: 100,
+	cost_lv2: 100,
 	streetId: "",
 });
 
@@ -41,7 +41,7 @@ watch(
 	{ deep: true }
 );
 
-function updateForm(newMapItem: MapItem | undefined){
+function updateForm(newMapItem: MapItem | undefined) {
 	if (newMapItem) {
 		if (newMapItem.property) {
 			const { id, name, sellCost, buildCost, cost_lv0, cost_lv1, cost_lv2, street } = newMapItem.property;
@@ -60,7 +60,7 @@ function updateForm(newMapItem: MapItem | undefined){
 	} else {
 		propertyFormRef.value?.resetFields();
 	}
-};
+}
 
 const propertyFormRef = ref<FormInstance>();
 
@@ -104,6 +104,15 @@ const handleCreateOrUpdateProperty = async (formEl: FormInstance | undefined) =>
 		}
 	});
 };
+
+const autoArrivedCost = () => {
+	const { sellCost, buildCost } = {
+		...toRaw(newPropertyForm),
+	};
+	newPropertyForm.cost_lv0 = 0.7 * sellCost;
+	newPropertyForm.cost_lv1 = 0.8 * sellCost + buildCost * 0.6;
+	newPropertyForm.cost_lv2 = 0.8 * sellCost + buildCost * 1.1;
+};
 </script>
 
 <template>
@@ -122,23 +131,27 @@ const handleCreateOrUpdateProperty = async (formEl: FormInstance | undefined) =>
 		</el-form-item>
 
 		<el-form-item label="空地价格" prop="sellCost">
-			<el-input-number :min="0" :step="100" v-model="newPropertyForm.sellCost" placeholder=""></el-input-number>
+			<el-input-number step-strictly :min="0" :step="100" v-model="newPropertyForm.sellCost" placeholder=""></el-input-number>
 		</el-form-item>
 
 		<el-form-item label="建楼价格" prop="buildCost">
-			<el-input-number :min="0" :step="100" v-model="newPropertyForm.buildCost" placeholder=""></el-input-number>
+			<el-input-number step-strictly :min="0" :step="100" v-model="newPropertyForm.buildCost" placeholder=""></el-input-number>
 		</el-form-item>
 
 		<el-form-item label="空地过路费" prop="cost_lv0">
-			<el-input-number :min="0" :step="100" v-model="newPropertyForm.cost_lv0" placeholder=""></el-input-number>
+			<el-input-number step-strictly :min="0" :step="100" v-model="newPropertyForm.cost_lv0" placeholder=""></el-input-number>
 		</el-form-item>
 
 		<el-form-item label="一栋楼过路费" prop="cost_lv1">
-			<el-input-number :min="0" :step="100" v-model="newPropertyForm.cost_lv1" placeholder=""></el-input-number>
+			<el-input-number step-strictly :min="0" :step="100" v-model="newPropertyForm.cost_lv1" placeholder=""></el-input-number>
 		</el-form-item>
 
 		<el-form-item label="两栋楼过路费" prop="cost_lv2">
-			<el-input-number :min="0" :step="100" v-model="newPropertyForm.cost_lv2" placeholder=""></el-input-number>
+			<el-input-number step-strictly :min="0" :step="100" v-model="newPropertyForm.cost_lv2" placeholder=""></el-input-number>
+		</el-form-item>
+
+		<el-form-item label="&nbsp">
+			<el-button @click="autoArrivedCost" type="primary">过路费参考</el-button>
 		</el-form-item>
 
 		<el-form-item label="所属街道" prop="streetId">
@@ -156,6 +169,6 @@ const handleCreateOrUpdateProperty = async (formEl: FormInstance | undefined) =>
 <style lang="scss" scoped>
 .property-form {
 	padding: 15px;
-  background-color: #fff;
+	background-color: #fff;
 }
 </style>

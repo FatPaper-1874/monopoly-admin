@@ -52,7 +52,7 @@ library.add(
 	faPlus,
 	faUpDownLeftRight,
 	faHandPointer,
-	faGauge,
+	faGauge
 );
 
 const app = createApp(App);
@@ -72,5 +72,10 @@ self.MonacoEnvironment = {
 		return new editorWorker();
 	},
 };
+
+import("./components/code-editor/base-interface.d.ts?raw").then((res) => {
+	const baseInterface = res.default;
+	monaco.languages.typescript.typescriptDefaults.setExtraLibs([{ content: baseInterface }]);
+});
 
 monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);

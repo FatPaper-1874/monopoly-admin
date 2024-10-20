@@ -18,8 +18,8 @@ onMounted(() => {
 
 <template>
 	<div class="dashboard">
-		<el-row>
-			<el-col :span="8">
+		<el-row style="height: 100%;">
+			<el-col :span="24">
 				<div class="room-list-container">
 					<div class="room-list-title">当前房间列表({{ roomList.length }})</div>
 					<div class="room-list">
@@ -33,14 +33,16 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .dashboard {
+	height: 100%;
 	.room-list-container {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-		height: 500px;
+		height: 100%;
 		padding: 20px;
     border-radius: 20px;
     box-shadow: var(--el-box-shadow-light);
+		box-sizing: border-box;
 
 		& > .room-list-title {
 			font-weight: bold;
@@ -49,7 +51,11 @@ onMounted(() => {
 
     &>.room-list{
       flex: 1;
+			display: flex;
+			justify-content: flex-start;
+			align-content: flex-start;
       overflow-y: scroll;
+			flex-wrap: wrap;
     }
 	}
 }

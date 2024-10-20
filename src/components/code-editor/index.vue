@@ -31,11 +31,11 @@ watch(
 		editor && editor.setValue(content);
 		console.log("change");
 
-		nextTick(() => {
-			if (!editor) return;
-			const formatDocument = editor.getAction("editor.action.formatDocument");
-			formatDocument && formatDocument.run();
-		});
+		// nextTick(() => {
+		// 	if (!editor) return;
+		// 	const formatDocument = editor.getAction("editor.action.formatDocument");
+		// 	formatDocument && formatDocument.run();
+		// });
 	},
 	{
 		immediate: true,
@@ -53,34 +53,34 @@ onMounted(() => {
 	// const output = monaco.languages.typescript.transpileModule(code, {
 	// 	compilerOptions: { module: monaco.languages.typescript.ModuleKind.CommonJS },
 	// });
-	import("./base-interface.d.ts?raw").then((res) => {
-		const baseInterface = res.default;
-		monaco.languages.typescript.typescriptDefaults.setExtraLibs([{ content: baseInterface }]);
-		const container = document.getElementById("code-editor-container") as HTMLElement;
-		editor = monaco.editor.create(container, {
-			value: mixContent(props.modelText, props.modelValue),
-			language: "typescript",
-			automaticLayout: true,
-		});
-
-		editor.onDidChangeModelContent((e) => {
-			if (!editor) return;
-			const content = editor.getValue();
-			const match = content.match(/\/\/CODING AREA\s*([\s\S]*?)\s*\/\/CODING AREA/);
-			if (!match) {
-				ElMessage({ type: "error", message: "请不要删除 //CODING AREA" });
-				return;
-			}
-			contentCache.value = match[1].trim();
-			emits("update:modelValue", match[1].trim());
-		});
-		nextTick(() => {
-			if (!editor) return;
-			editor.setValue(editor.getValue());
-		});
+	// import("./base-interface.d.ts?raw").then((res) => {
+	// 	const baseInterface = res.default;
+	// 	monaco.languages.typescript.typescriptDefaults.setExtraLibs([{ content: baseInterface }]);
+	const container = document.getElementById("code-editor-container") as HTMLElement;
+	editor = monaco.editor.create(container, {
+		value: mixContent(props.modelText, props.modelValue),
+		language: "typescript",
+		automaticLayout: true,
 	});
-	window.addEventListener("keydown", handleSaveKey);
+
+	editor.onDidChangeModelContent((e) => {
+		if (!editor) return;
+		const content = editor.getValue();
+		const match = content.match(/\/\/CODING AREA\s*([\s\S]*?)\s*\/\/CODING AREA/);
+		if (!match) {
+			ElMessage({ type: "error", message: "请不要删除 //CODING AREA" });
+			return;
+		}
+		contentCache.value = match[1].trim();
+		emits("update:modelValue", match[1].trim());
+	});
+	nextTick(() => {
+		if (!editor) return;
+		editor.setValue(editor.getValue());
+	});
 });
+window.addEventListener("keydown", handleSaveKey);
+// });
 
 onBeforeUnmount(() => {
 	window.removeEventListener("keydown", handleSaveKey);

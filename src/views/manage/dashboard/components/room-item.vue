@@ -28,10 +28,11 @@ const props = defineProps<{ room: RoomMapItem }>();
 	padding: 20px;
 	box-sizing: border-box;
 	box-shadow: var(--el-box-shadow-light);
+	height: max-content;
 
-  b{
-    color:var(--el-color-primary)
-  }
+	b {
+		color: var(--el-color-primary);
+	}
 
 	& > .foot-bar {
 		margin-top: 20px;
@@ -39,6 +40,10 @@ const props = defineProps<{ room: RoomMapItem }>();
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+
+		& > .owner-id {
+			margin-left: 50px;
+		}
 	}
 }
 </style>

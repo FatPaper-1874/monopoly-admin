@@ -9,7 +9,7 @@ export const createMap = async (name: string) => {
 };
 
 export const getMapInfoById = async (id: string) => {
-	const res = (await _axios.get("/map/info", { params: { id } })) as MapData;
+	const res = (await _axios.get("/map/info", { params: { id, console: true } })) as MapData;
 	return res;
 };
 

@@ -11,13 +11,17 @@ watch(mapInfo, (newMapInfo) => {
 	inUse.value = newMapInfo.inUse;
 });
 
+const isLoading = ref(false);
 const handleUpdateMapInUse = async () => {
+	isLoading.value = true;
 	if (mapInfo) await updateMapInUse(mapInfo.id, inUse.value);
+	isLoading.value = false;
 };
 </script>
 
 <template>
-	<div class="in-use-state">
+	<div v-loading="isLoading" class="in-use-state">
+		<span>启动地图才会刷新地图缓存, 用户才能使用到最新更新的地图</span><br/>
 		<el-switch
 			inline-prompt
 			style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
@@ -33,5 +37,11 @@ const handleUpdateMapInUse = async () => {
 .in-use-state {
 	padding: 6px 12px;
 	background: #fff;
+
+	&>span{
+		font-size: 12px;
+		font-weight: bold;
+		color: #3d3d3d;
+	}
 }
 </style>

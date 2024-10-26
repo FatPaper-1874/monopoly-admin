@@ -116,4 +116,6 @@ export type RoomMapItem = {
 	createTime: number;
 	deleteTime: number;
 	lastHeartTime: number;
+	isPrivate: boolean;
+	isStarted: boolean;
 };

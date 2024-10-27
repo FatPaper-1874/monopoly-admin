@@ -5,9 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { isAdmin } from "@/utils/api/user";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import { isMobileDevice } from "../utils/index";
 
 const router = useRouter();
 const currentRoutePath = computed(() => router.currentRoute.value.path);
+
+const isMobile = isMobileDevice();
 
 onBeforeMount(async () => {
 	const token = localStorage.getItem("token");
@@ -32,12 +35,17 @@ function handleLogout() {
 	<el-container class="main-page">
 		<el-header class="top-bar" height="50px">
 			<h3 style="display: inline-block">FatPaper大富翁总控中心</h3>
-			<el-button @click="handleLogout">登出</el-button>
+			<el-button type="danger" plain @click="handleLogout">登出</el-button>
 		</el-header>
 
-		<el-container>
-			<el-aside class="menu-container" width="240px">
-				<el-menu router :default-active="currentRoutePath">
+		<el-container :direction="isMobile ? 'vertical' : 'horizontal'">
+			<el-aside class="menu-container" :style="{ width: isMobile ? '100%' : '240px' }">
+				<el-menu
+					text-color="#4e4e4e"
+					:mode="isMobile ? 'horizontal' : 'vertical'"
+					router
+					:default-active="currentRoutePath"
+				>
 					<el-menu-item v-for="item in menus" :index="item.path">
 						<FontAwesomeIcon class="icon" :icon="item.icon"></FontAwesomeIcon>
 						<span>{{ item.menuName }}</span>

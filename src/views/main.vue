@@ -53,7 +53,10 @@ function handleLogout() {
 				</el-menu>
 			</el-aside>
 
-			<el-main class="router-view-container">
+			<el-main
+				class="router-view-container"
+				:style="{ maxHeight: isMobile ? 'calc(100vh - 110px)' : 'calc(100vh - 50px)' }"
+			>
 				<router-view></router-view>
 			</el-main>
 		</el-container>
@@ -83,9 +86,5 @@ function handleLogout() {
 	.icon {
 		width: 1.5rem;
 	}
-}
-
-.router-view-container {
-	max-height: calc(100vh - 50px);
 }
 </style>
